@@ -1,0 +1,42 @@
+Options -Indexes
+Options -MultiViews
+
+# ── Security: block sensitive paths ──────────────────────────────────── //
+<FilesMatch "\.(env|log|json|lock|md|sh|sql|bak)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+   RewriteEngine On
+    RewriteBase /realestate/public/
+
+    # যদি ফাইল বা ফোল্ডার সরাসরি থাকে তবে সেটি ওপেন করো
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # বাকি সব রিকোয়েস্ট index.php তে পাঠিয়ে দাও
+    RewriteRule ^(.*)$ index.php [QSA,L]
+
+</IfModule>
+
+# ── Cache static assets ───────────────────────────────────────────────── //
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/webp  "access plus 1 month"
+    ExpiresByType image/jpeg  "access plus 1 month"
+    ExpiresByType image/png   "access plus 1 month"
+    ExpiresByType text/css    "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+</IfModule>
+
+# ── Security headers ──────────────────────────────────────────────────── //
+<IfModule mod_headers.c>
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# ── Disable server signature ──────────────────────────────────────────── //
+ServerSignature Off

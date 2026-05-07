@@ -1,0 +1,109 @@
+<?php
+require_once __DIR__ . '/../classes/Auth.php';
+
+$auth = Auth::getInstance();
+
+// Already logged in?
+if ($auth->isLoggedIn()) {
+    header('Location: ' . APP_URL . '/index.php?page=home');
+    exit;
+}
+
+$errors  = [];
+$success = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // CSRF check
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        die('Invalid CSRF token.');
+    }
+
+    $result = $auth->register($_POST);
+
+    if ($result['success']) {
+        $success = $result['message'];
+        // OTP page এ পাঠাও
+        header('Location: ' . APP_URL . '/index.php?page=verify-otp&email=' . urlencode($result['email']));
+        exit;
+    } else {
+        $errors = $result['errors'];
+    }
+}
+
+// CSRF token generate
+$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+?>
+
+<div class="auth-wrapper">
+  <div class="auth-card">
+
+    <div class="auth-logo">
+      <h2>🏠 <?= APP_NAME ?></h2>
+      <p>নতুন account তৈরি করুন</p>
+    </div>
+
+    <?php if (!empty($errors['general'])): ?>
+      <div class="alert alert-danger"><?= htmlspecialchars($errors['general']) ?></div>
+    <?php endif; ?>
+
+    <form method="POST" action="">
+      <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+
+      <!-- Name -->
+      <div class="mb-3">
+        <label class="form-label">পূর্ণ নাম</label>
+        <input type="text" name="name" class="form-control <?= isset($errors['name']) ? 'is-invalid' : '' ?>"
+               value="<?= htmlspecialchars($_POST['name'] ?? '') ?>" placeholder="আপনার নাম">
+        <?php if (isset($errors['name'])): ?>
+          <div class="invalid-feedback"><?= $errors['name'] ?></div>
+        <?php endif; ?>
+      </div>
+
+      <!-- Email -->
+      <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email" name="email" class="form-control <?= isset($errors['email']) ? 'is-invalid' : '' ?>"
+               value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" placeholder="example@email.com">
+        <?php if (isset($errors['email'])): ?>
+          <div class="invalid-feedback"><?= $errors['email'] ?></div>
+        <?php endif; ?>
+      </div>
+
+      <!-- Phone -->
+      <div class="mb-3">
+        <label class="form-label">ফোন নম্বর</label>
+        <input type="text" name="phone" class="form-control"
+               value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>" placeholder="01XXXXXXXXX">
+      </div>
+
+      <!-- Password -->
+      <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" 
+               class="form-control <?= isset($errors['password']) ? 'is-invalid' : '' ?>"
+               placeholder="কমপক্ষে 6 character">
+        <?php if (isset($errors['password'])): ?>
+          <div class="invalid-feedback"><?= $errors['password'] ?></div>
+        <?php endif; ?>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="mb-3">
+        <label class="form-label">Password নিশ্চিত করুন</label>
+        <input type="password" name="confirm_password"
+               class="form-control <?= isset($errors['confirm_password']) ? 'is-invalid' : '' ?>"
+               placeholder="Password আবার দিন">
+        <?php if (isset($errors['confirm_password'])): ?>
+          <div class="invalid-feedback"><?= $errors['confirm_password'] ?></div>
+        <?php endif; ?>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100">Register করুন</button>
+    </form>
+
+    <p class="text-center mt-3">
+      আগে থেকেই account আছে? <a href="?page=login">Login করুন</a>
+    </p>
+
+  </div>
+</div>

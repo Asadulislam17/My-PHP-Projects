@@ -1,0 +1,425 @@
+-- ============================================
+-- DATABASE: realestate_db
+-- ============================================
+
+CREATE DATABASE IF NOT EXISTS realestate_db
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_unicode_ci;
+
+USE realestate_db;
+
+-- ============================================
+-- 1. ROLES TABLE
+-- ============================================
+CREATE TABLE roles (
+    id        TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name      VARCHAR(50) NOT NULL UNIQUE,  -- admin, agent, buyer
+    label     VARCHAR(100) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO roles (name, label) VALUES
+('admin', 'Administrator'),
+('agent', 'Real Estate Agent'),
+('buyer', 'Property Buyer');
+
+
+-- ============================================
+-- 2. USERS TABLE
+-- ============================================
+CREATE TABLE users (
+    id            INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    role_id       TINYINT UNSIGNED NOT NULL DEFAULT 3,  -- default: buyer
+    name          VARCHAR(100) NOT NULL,
+    email         VARCHAR(150) NOT NULL UNIQUE,
+    phone         VARCHAR(20),
+    password_hash VARCHAR(255) NOT NULL,
+    avatar        VARCHAR(255) DEFAULT NULL,
+    status        ENUM('active','inactive','banned') DEFAULT 'inactive',
+    email_verified_at DATETIME DEFAULT NULL,
+    otp           VARCHAR(10) DEFAULT NULL,
+    otp_expires_at DATETIME DEFAULT NULL,
+    remember_token VARCHAR(100) DEFAULT NULL,
+    created_at    DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at    DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE RESTRICT,
+    INDEX idx_email  (email),
+    INDEX idx_status (status),
+    INDEX idx_role   (role_id)
+);
+
+
+-- ============================================
+-- 3. PROPERTY TYPES
+-- ============================================
+CREATE TABLE property_types (
+    id    TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name  VARCHAR(100) NOT NULL UNIQUE,   -- Apartment, Villa, Commercial
+    icon  VARCHAR(100) DEFAULT NULL,
+    slug  VARCHAR(100) NOT NULL UNIQUE
+);
+
+INSERT INTO property_types (name, icon, slug) VALUES
+('Apartment',  'building',    'apartment'),
+('Villa',      'home',        'villa'),
+('Commercial', 'briefcase',   'commercial'),
+('Land',       'map',         'land'),
+('Office',     'monitor',     'office');
+
+
+-- ============================================
+-- 4. DIVISIONS / LOCATIONS
+-- ============================================
+CREATE TABLE divisions (
+    id   TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE districts (
+    id          SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    division_id TINYINT UNSIGNED NOT NULL,
+    name        VARCHAR(100) NOT NULL,
+    FOREIGN KEY (division_id) REFERENCES divisions(id)
+);
+
+CREATE TABLE areas (
+    id          SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    district_id SMALLINT UNSIGNED NOT NULL,
+    name        VARCHAR(100) NOT NULL,
+    FOREIGN KEY (district_id) REFERENCES districts(id)
+);
+
+-- Sample Data
+INSERT INTO divisions (name) VALUES ('Dhaka'),('Chittagong'),('Sylhet');
+INSERT INTO districts (division_id, name) VALUES (1,'Dhaka'),(1,'Gazipur'),(2,'Chittagong');
+INSERT INTO areas (district_id, name) VALUES (1,'Gulshan'),(1,'Banani'),(1,'Dhanmondi'),(1,'Mirpur');
+
+
+-- ============================================
+-- 5. PROPERTIES TABLE
+-- ============================================
+CREATE TABLE properties (
+    id               INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id          INT UNSIGNED NOT NULL,          -- Agent/Owner
+    type_id          TINYINT UNSIGNED NOT NULL,
+    area_id          SMALLINT UNSIGNED NOT NULL,
+    title            VARCHAR(255) NOT NULL,
+    slug             VARCHAR(255) NOT NULL UNIQUE,
+    description      TEXT,
+    price            DECIMAL(15,2) NOT NULL,
+    price_type       ENUM('sale','rent') DEFAULT 'sale',
+    size_sqft        DECIMAL(10,2),
+    bedrooms         TINYINT UNSIGNED DEFAULT 0,
+    bathrooms        TINYINT UNSIGNED DEFAULT 0,
+    floor_no         TINYINT UNSIGNED DEFAULT NULL,
+    total_floors     TINYINT UNSIGNED DEFAULT NULL,
+    address          VARCHAR(255),
+    latitude         DECIMAL(10,7) DEFAULT NULL,
+    longitude        DECIMAL(10,7) DEFAULT NULL,
+    status           ENUM('pending','approved','rejected','sold','rented') DEFAULT 'pending',
+    is_featured      BOOLEAN DEFAULT FALSE,
+    is_verified      BOOLEAN DEFAULT FALSE,
+    facing           ENUM('north','south','east','west') DEFAULT NULL,
+    year_built       YEAR DEFAULT NULL,
+    parking          BOOLEAN DEFAULT FALSE,
+    views_count      INT UNSIGNED DEFAULT 0,
+    created_at       DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at       DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id)  REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (type_id)  REFERENCES property_types(id),
+    FOREIGN KEY (area_id)  REFERENCES areas(id),
+
+    INDEX idx_price    (price),
+    INDEX idx_status   (status),
+    INDEX idx_type     (type_id),
+    INDEX idx_area     (area_id),
+    INDEX idx_featured (is_featured),
+    INDEX idx_price_type (price_type)
+);
+
+
+-- ============================================
+-- 6. PROPERTY IMAGES
+-- ============================================
+CREATE TABLE property_images (
+    id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    property_id INT UNSIGNED NOT NULL,
+    image_path  VARCHAR(255) NOT NULL,
+    thumbnail   VARCHAR(255) DEFAULT NULL,
+    is_cover    BOOLEAN DEFAULT FALSE,
+    sort_order  TINYINT UNSIGNED DEFAULT 0,
+    created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE CASCADE,
+    INDEX idx_property (property_id)
+);
+
+
+-- ============================================
+-- 7. AMENITIES
+-- ============================================
+CREATE TABLE amenities (
+    id   TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    icon VARCHAR(100) DEFAULT NULL
+);
+
+INSERT INTO amenities (name, icon) VALUES
+('Swimming Pool', 'droplets'),
+('Gym',           'dumbbell'),
+('Parking',       'car'),
+('Generator',     'zap'),
+('Lift/Elevator', 'arrow-up'),
+('Security',      'shield'),
+('CCTV',          'camera'),
+('Gas Line',      'flame'),
+('Water Supply',  'droplet'),
+('Internet',      'wifi');
+
+CREATE TABLE property_amenities (
+    property_id  INT UNSIGNED NOT NULL,
+    amenity_id   TINYINT UNSIGNED NOT NULL,
+    PRIMARY KEY (property_id, amenity_id),
+    FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE CASCADE,
+    FOREIGN KEY (amenity_id)  REFERENCES amenities(id)  ON DELETE CASCADE
+);
+
+
+-- ============================================
+-- 8. WISHLIST
+-- ============================================
+CREATE TABLE wishlist (
+    id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id     INT UNSIGNED NOT NULL,
+    property_id INT UNSIGNED NOT NULL,
+    created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    UNIQUE KEY unique_wish (user_id, property_id),
+    FOREIGN KEY (user_id)     REFERENCES users(id)      ON DELETE CASCADE,
+    FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE CASCADE
+);
+
+
+-- ============================================
+-- 9. INQUIRIES (Buyer ↔ Agent Messaging)
+-- ============================================
+CREATE TABLE inquiries (
+    id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    property_id INT UNSIGNED NOT NULL,
+    sender_id   INT UNSIGNED NOT NULL,   -- Buyer
+    agent_id    INT UNSIGNED NOT NULL,   -- Agent
+    message     TEXT NOT NULL,
+    reply       TEXT DEFAULT NULL,
+    status      ENUM('pending','replied','closed') DEFAULT 'pending',
+    created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+    replied_at  DATETIME DEFAULT NULL,
+
+    FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE CASCADE,
+    FOREIGN KEY (sender_id)   REFERENCES users(id)      ON DELETE CASCADE,
+    FOREIGN KEY (agent_id)    REFERENCES users(id)      ON DELETE CASCADE,
+    INDEX idx_property (property_id),
+    INDEX idx_sender   (sender_id)
+);
+
+
+-- ============================================
+-- 10. REVIEWS & RATINGS
+-- ============================================
+CREATE TABLE reviews (
+    id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    property_id INT UNSIGNED NOT NULL,
+    user_id     INT UNSIGNED NOT NULL,
+    rating      TINYINT UNSIGNED NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    comment     TEXT DEFAULT NULL,
+    status      ENUM('pending','approved','rejected') DEFAULT 'pending',
+    created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    UNIQUE KEY unique_review (property_id, user_id),
+    FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id)     REFERENCES users(id)      ON DELETE CASCADE
+);
+
+
+-- ============================================
+-- 11. BOOKINGS (Schedule a Tour)
+-- ============================================
+CREATE TABLE bookings (
+    id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    property_id INT UNSIGNED NOT NULL,
+    user_id     INT UNSIGNED NOT NULL,
+    agent_id    INT UNSIGNED NOT NULL,
+    tour_date   DATE NOT NULL,
+    tour_time   TIME NOT NULL,
+    message     TEXT DEFAULT NULL,
+    status      ENUM('pending','confirmed','cancelled','completed') DEFAULT 'pending',
+    created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id)     REFERENCES users(id)      ON DELETE CASCADE,
+    FOREIGN KEY (agent_id)    REFERENCES users(id)      ON DELETE CASCADE,
+    INDEX idx_tour_date (tour_date)
+);
+
+
+-- ============================================
+-- 12. MATERIAL RATES (Construction Cost)
+-- ============================================
+CREATE TABLE material_rates (
+    id         TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name       VARCHAR(100) NOT NULL,   -- Cement, Rod, Bricks, Sand
+    unit       VARCHAR(50) NOT NULL,    -- bag, ton, piece, cft
+    rate       DECIMAL(10,2) NOT NULL,  -- BDT
+    updated_by INT UNSIGNED DEFAULT NULL,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL
+);
+
+INSERT INTO material_rates (name, unit, rate) VALUES
+('Cement', 'bag (50kg)', 520.00),
+('Rod (10mm)', 'ton', 85000.00),
+('Rod (12mm)', 'ton', 87000.00),
+('Bricks', 'piece', 12.00),
+('Sand', 'cft', 45.00),
+('Stone Chips', 'cft', 80.00),
+('Labor (Mason)', 'day', 800.00),
+('Labor (Helper)', 'day', 500.00);
+
+
+-- ============================================
+-- 13. SUBSCRIPTIONS (Agent Plans)
+-- ============================================
+CREATE TABLE subscription_plans (
+    id            TINYINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name          VARCHAR(100) NOT NULL,   -- Basic, Pro, Enterprise
+    price         DECIMAL(10,2) NOT NULL,
+    duration_days SMALLINT UNSIGNED NOT NULL,
+    max_listings  SMALLINT UNSIGNED DEFAULT 10,
+    features      JSON DEFAULT NULL,
+    is_active     BOOLEAN DEFAULT TRUE
+);
+
+INSERT INTO subscription_plans (name, price, duration_days, max_listings) VALUES
+('Basic',      999.00,  30,  5),
+('Pro',       2499.00,  30,  20),
+('Enterprise',4999.00,  30,  999);
+
+CREATE TABLE subscriptions (
+    id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id     INT UNSIGNED NOT NULL,
+    plan_id     TINYINT UNSIGNED NOT NULL,
+    starts_at   DATE NOT NULL,
+    expires_at  DATE NOT NULL,
+    status      ENUM('active','expired','cancelled') DEFAULT 'active',
+    created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id)  REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (plan_id)  REFERENCES subscription_plans(id),
+    INDEX idx_user   (user_id),
+    INDEX idx_status (status)
+);
+
+
+-- ============================================
+-- 14. PAYMENTS & TRANSACTIONS
+-- ============================================
+CREATE TABLE transactions (
+    id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id         INT UNSIGNED NOT NULL,
+    type            ENUM('subscription','featured_listing') NOT NULL,
+    reference_id    INT UNSIGNED DEFAULT NULL,   -- subscription_id or property_id
+    amount          DECIMAL(10,2) NOT NULL,
+    currency        VARCHAR(10) DEFAULT 'BDT',
+    gateway         VARCHAR(50),                 -- SSLCommerz, bKash, Nagad
+    gateway_trx_id  VARCHAR(150) DEFAULT NULL,
+    status          ENUM('pending','success','failed','refunded') DEFAULT 'pending',
+    created_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_user   (user_id),
+    INDEX idx_status (status)
+);
+
+
+-- ============================================
+-- 15. RECENTLY VIEWED
+-- ============================================
+CREATE TABLE recently_viewed (
+    id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id     INT UNSIGNED NOT NULL,
+    property_id INT UNSIGNED NOT NULL,
+    viewed_at   DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    UNIQUE KEY unique_view (user_id, property_id),
+    FOREIGN KEY (user_id)     REFERENCES users(id)      ON DELETE CASCADE,
+    FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE CASCADE
+);
+
+
+-- ============================================
+-- 16. SAVED SEARCHES
+-- ============================================
+CREATE TABLE saved_searches (
+    id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id    INT UNSIGNED NOT NULL,
+    title      VARCHAR(150) DEFAULT NULL,
+    filters    JSON NOT NULL,             -- {"location":"Gulshan","price_max":5000000}
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+
+-- ============================================
+-- 17. ANALYTICS / PROPERTY VIEWS
+-- ============================================
+CREATE TABLE property_views (
+    id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    property_id INT UNSIGNED NOT NULL,
+    user_id     INT UNSIGNED DEFAULT NULL,  -- NULL = guest
+    ip_address  VARCHAR(45),
+    user_agent  VARCHAR(255),
+    viewed_at   DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (property_id) REFERENCES properties(id) ON DELETE CASCADE,
+    INDEX idx_property (property_id),
+    INDEX idx_date     (viewed_at)
+);
+
+
+-- ============================================
+-- 18. SETTINGS
+-- ============================================
+CREATE TABLE settings (
+    id         SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    key_name   VARCHAR(100) NOT NULL UNIQUE,
+    value      TEXT,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+INSERT INTO settings (key_name, value) VALUES
+('site_name',       'RealEstate BD'),
+('site_email',      'info@realestate.com'),
+('site_phone',      '+880 1700-000000'),
+('currency',        'BDT'),
+('emi_interest_rate','9.5'),
+('maintenance_mode','0');
+
+
+-- ============================================
+-- 19. LOGS (Activity + Error)
+-- ============================================
+CREATE TABLE activity_logs (
+    id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id    INT UNSIGNED DEFAULT NULL,
+    action     VARCHAR(200) NOT NULL,   -- 'user.login', 'property.created'
+    details    TEXT DEFAULT NULL,
+    ip_address VARCHAR(45),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_action (action),
+    INDEX idx_date   (created_at)
+);

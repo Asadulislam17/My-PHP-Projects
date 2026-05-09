@@ -488,7 +488,11 @@ class Auth {
         $headers = "From: no-reply@realestate.com\r\n";
         $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
 
-        mail($email, $subject, $body, $headers);
+        // mail($email, $subject, $body, $headers);
+        if (!@mail($email, $subject, $body, $headers)) {
+            // এখানে চাইলে একটি লগ রাখতে পারেন যে ইমেইল পাঠানো যায়নি
+            error_log("Failed to send email to $email");
+        }
 
         // Debug mode তে OTP দেখাও
         if (APP_DEBUG) {

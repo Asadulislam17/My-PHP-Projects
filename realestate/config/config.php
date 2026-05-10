@@ -22,7 +22,7 @@ loadEnv(__DIR__ . '/../.env');
 
 // App Constants
 define('APP_NAME',  $_ENV['APP_NAME']  ?? 'RealEstate');
-define('APP_URL',   $_ENV['APP_URL']   ?? 'http://localhost/PHP_ALL/realestate');
+define('APP_URL',   $_ENV['APP_URL']   ?? 'http://localhost/My-PHP-Projects/realestate');
 define('APP_ENV',   $_ENV['APP_ENV']   ?? 'production');
 define('APP_DEBUG', $_ENV['APP_DEBUG'] ?? false);
 

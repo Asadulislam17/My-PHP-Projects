@@ -22,9 +22,66 @@ class Auth {
     // =========================================
     // ✅ REGISTER
     // =========================================
-    public function register(array $data): array {
+    // public function register(array $data): array {
 
-        // --- Validation ---
+    //     // --- Validation ---
+    //     $errors = $this->validateRegister($data);
+    //     if (!empty($errors)) {
+    //         return ['success' => false, 'errors' => $errors];
+    //     }
+
+    //     $name  = trim($data['name']);
+    //     $email = strtolower(trim($data['email']));
+    //     $phone = trim($data['phone'] ?? '');
+    //     $pass  = $data['password'];
+
+    //     // Email already exists?
+    //     $existing = $this->db->queryOne(
+    //         "SELECT id FROM users WHERE email = ?",
+    //         [$email]
+    //     );
+    //     if ($existing) {
+    //         return ['success' => false, 'errors' => ['email' => 'এই email আগে থেকেই registered।']];
+    //     }
+
+    //     // Password hash
+    //     $hash = password_hash($pass, PASSWORD_BCRYPT, ['cost' => 12]);
+
+    //     // OTP generate
+    //     $otp        = $this->generateOTP();
+    //     $otp_expiry = date('Y-m-d H:i:s', strtotime('+15 minutes'));
+
+    //     // Insert user
+    //     $inserted = $this->db->execute(
+    //         "INSERT INTO users 
+    //             (role_id, name, email, phone, password_hash, otp, otp_expires_at, status)
+    //          VALUES 
+    //             (3, ?, ?, ?, ?, ?, ?, 'inactive')",
+    //         [$name, $email, $phone, $hash, $otp, $otp_expiry]
+    //     );
+
+    //     if (!$inserted) {
+    //         return ['success' => false, 'errors' => ['general' => 'Registration failed। আবার try করুন।']];
+    //     }
+
+    //     $userId = $this->db->lastInsertId();
+
+    //     // Activity log
+    //     $this->logActivity($userId, 'user.register', 'New user registered');
+
+    //     // OTP send (email)
+    //     $this->sendOTPEmail($email, $name, $otp);
+
+    //     return [
+    //         'success' => true,
+    //         'message' => 'Registration সফল! আপনার email এ OTP পাঠানো হয়েছে।',
+    //         'user_id' => $userId,
+    //         'email'   => $email
+    //     ];
+    // }
+
+    public function register(array $data): array {
+    // --- Validation ---
         $errors = $this->validateRegister($data);
         if (!empty($errors)) {
             return ['success' => false, 'errors' => $errors];
@@ -34,6 +91,11 @@ class Auth {
         $email = strtolower(trim($data['email']));
         $phone = trim($data['phone'] ?? '');
         $pass  = $data['password'];
+        
+        // ✅ Role হ্যান্ডেল করা (এজেন্ট হলে ২, না হলে বায়ার হিসেবে ৩)
+        // আপনার ডাটাবেসের roles টেবিল অনুযায়ী আইডি চেক করে নিবেন
+        $role_name = $data['role'] ?? 'buyer';
+        $role_id = ($role_name === 'agent') ? 2 : 3; 
 
         // Email already exists?
         $existing = $this->db->queryOne(
@@ -51,13 +113,13 @@ class Auth {
         $otp        = $this->generateOTP();
         $otp_expiry = date('Y-m-d H:i:s', strtotime('+15 minutes'));
 
-        // Insert user
+        // ✅ Insert user (এলাহানে role_id ডাইনামিক করা হয়েছে)
         $inserted = $this->db->execute(
             "INSERT INTO users 
                 (role_id, name, email, phone, password_hash, otp, otp_expires_at, status)
-             VALUES 
-                (3, ?, ?, ?, ?, ?, ?, 'inactive')",
-            [$name, $email, $phone, $hash, $otp, $otp_expiry]
+            VALUES 
+                (?, ?, ?, ?, ?, ?, ?, 'inactive')",
+            [$role_id, $name, $email, $phone, $hash, $otp, $otp_expiry]
         );
 
         if (!$inserted) {
@@ -67,7 +129,7 @@ class Auth {
         $userId = $this->db->lastInsertId();
 
         // Activity log
-        $this->logActivity($userId, 'user.register', 'New user registered');
+        $this->logActivity($userId, 'user.register', "New user registered as $role_name");
 
         // OTP send (email)
         $this->sendOTPEmail($email, $name, $otp);
@@ -79,6 +141,7 @@ class Auth {
             'email'   => $email
         ];
     }
+
 
 
     // =========================================

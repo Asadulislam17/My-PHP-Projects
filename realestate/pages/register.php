@@ -37,9 +37,9 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 <div class="auth-wrapper">
   <div class="auth-card">
 
-    <div class="auth-logo">
+    <div class="auth-logo text-center mb-4">
       <h2>🏠 <?= APP_NAME ?></h2>
-      <p>নতুন account তৈরি করুন</p>
+      <p class="text-muted">নতুন account তৈরি করুন</p>
     </div>
 
     <?php if (!empty($errors['general'])): ?>
@@ -51,7 +51,7 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
       <!-- Name -->
       <div class="mb-3">
-        <label class="form-label">পূর্ণ নাম</label>
+        <label class="form-label fw-bold">পূর্ণ নাম</label>
         <input type="text" name="name" class="form-control <?= isset($errors['name']) ? 'is-invalid' : '' ?>"
                value="<?= htmlspecialchars($_POST['name'] ?? '') ?>" placeholder="আপনার নাম">
         <?php if (isset($errors['name'])): ?>
@@ -61,7 +61,7 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
       <!-- Email -->
       <div class="mb-3">
-        <label class="form-label">Email</label>
+        <label class="form-label fw-bold">Email</label>
         <input type="email" name="email" class="form-control <?= isset($errors['email']) ? 'is-invalid' : '' ?>"
                value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" placeholder="example@email.com">
         <?php if (isset($errors['email'])): ?>
@@ -71,14 +71,34 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
       <!-- Phone -->
       <div class="mb-3">
-        <label class="form-label">ফোন নম্বর</label>
+        <label class="form-label fw-bold">ফোন নম্বর</label>
         <input type="text" name="phone" class="form-control"
                value="<?= htmlspecialchars($_POST['phone'] ?? '') ?>" placeholder="01XXXXXXXXX">
       </div>
 
+      <!-- Account Type (Role) Selection - Added Here -->
+      <div class="mb-3 border p-3 rounded bg-light">
+          <label class="form-label fw-bold">আপনি কি হিসেবে যোগ দিতে চান?</label>
+          <div class="d-flex gap-4">
+              <div class="form-check">
+                  <input class="form-check-input" type="radio" name="role" id="roleBuyer" value="buyer" 
+                         <?= ($_POST['role'] ?? 'buyer') === 'buyer' ? 'checked' : '' ?>>
+                  <label class="form-check-label" for="roleBuyer">ক্রেতা (Buyer)</label>
+              </div>
+              <div class="form-check">
+                  <input class="form-check-input" type="radio" name="role" id="roleAgent" value="agent"
+                         <?= ($_POST['role'] ?? '') === 'agent' ? 'checked' : '' ?>>
+                  <label class="form-check-label" for="roleAgent">এজেন্ট (Agent)</label>
+              </div>
+          </div>
+          <?php if (isset($errors['role'])): ?>
+              <div class="text-danger small mt-1"><?= $errors['role'] ?></div>
+          <?php endif; ?>
+      </div>
+
       <!-- Password -->
       <div class="mb-3">
-        <label class="form-label">Password</label>
+        <label class="form-label fw-bold">Password</label>
         <input type="password" name="password" 
                class="form-control <?= isset($errors['password']) ? 'is-invalid' : '' ?>"
                placeholder="কমপক্ষে 6 character">
@@ -89,7 +109,7 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
       <!-- Confirm Password -->
       <div class="mb-3">
-        <label class="form-label">Password নিশ্চিত করুন</label>
+        <label class="form-label fw-bold">Password নিশ্চিত করুন</label>
         <input type="password" name="confirm_password"
                class="form-control <?= isset($errors['confirm_password']) ? 'is-invalid' : '' ?>"
                placeholder="Password আবার দিন">
@@ -98,11 +118,11 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         <?php endif; ?>
       </div>
 
-      <button type="submit" class="btn btn-primary w-100">Register করুন</button>
+      <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">Register করুন</button>
     </form>
 
-    <p class="text-center mt-3">
-      আগে থেকেই account আছে? <a href="?page=login">Login করুন</a>
+    <p class="text-center mt-3 text-muted">
+      আগে থেকেই account আছে? <a href="?page=login" class="text-decoration-none">Login করুন</a>
     </p>
 
   </div>

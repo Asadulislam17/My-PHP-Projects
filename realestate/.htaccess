@@ -1,10 +1,10 @@
 Options -Indexes
 RewriteEngine On
+RewriteBase /My-PHP-Projects/realestate/
 
 # Block sensitive files
 RewriteRule ^\.env$ - [F,L]
-RewriteRule ^config/ - [F,L]
-RewriteRule ^classes/ - [F,L]
+RewriteRule ^(config|classes|pages)/ - [F,L]
 
 # Route all requests to index.php
 RewriteCond %{REQUEST_FILENAME} !-f

@@ -2,6 +2,7 @@
 ob_start();
 require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/config/Database.php';
+require_once __DIR__ . '/includes/functions.php';
 
 // ✅ DB Connection test
 $db = Database::getInstance();
@@ -13,7 +14,7 @@ $allowed_pages = [
     'home', 'listing', 'property', 'login', 'register', 
     'dashboard', 'verify-otp', 'notifications', 'logout',
     'buyer-dashboard', 'agent-dashboard', 'admin-dashboard',
-    'add-property', 'tools' // এই লাইনগুলো যোগ করুন
+    'add-property', 'tools', 'contact', 'payment' // এই লাইনগুলো যোগ করুন
 ];
 
 

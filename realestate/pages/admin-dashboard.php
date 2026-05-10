@@ -115,46 +115,56 @@ $saved = isset($_GET['saved']);
     </div>
 
     <nav class="admin-nav">
+      <!-- মূল গ্রুপ -->
       <div class="admin-nav-group">
         <span class="nav-group-label">মূল</span>
         <?php
         $navItems = [
-          'overview'    => ['bi-speedometer2', 'ড্যাশবোর্ড'],
-          'properties'  => ['bi-house-check',  'Property অনুমোদন', $stats['pending_props']],
-          'users'       => ['bi-people',       'ব্যবহারকারী'],
-          'transactions'=> ['bi-credit-card',  'লেনদেন'],
+          'overview'     => ['bi-speedometer2', 'ড্যাশবোর্ড', 0],
+          'properties'   => ['bi-house-check',  'Property অনুমোদন', $stats['pending_props']],
+          'users'        => ['bi-people',       'ব্যবহারকারী', 0],
+          'transactions' => ['bi-credit-card',  'লেনদেন', 0],
         ];
-        foreach ($navItems as $key => [$icon, $label, $badge]):
+
+        foreach ($navItems as $key => $item):
+            $icon  = $item[0];
+            $label = $item[1];
+            $badge = $item[2] ?? 0;
         ?>
-        <a href="?page=admin-dashboard&tab=<?= $key ?>"
-           class="admin-nav-item <?= $activeTab===$key?'active':'' ?>">
+        <a href="<?= APP_URL ?>/admin-dashboard?tab=<?= $key ?>"
+          class="admin-nav-item <?= $activeTab === $key ? 'active' : '' ?>">
           <i class="bi <?= $icon ?>"></i>
           <span><?= $label ?></span>
-          <?php if (!empty($badge) && $badge > 0): ?>
+          <?php if ($badge > 0): ?>
           <span class="nav-badge"><?= $badge ?></span>
           <?php endif; ?>
         </a>
         <?php endforeach; ?>
       </div>
 
+      <!-- সেটিংস গ্রুপ -->
       <div class="admin-nav-group">
         <span class="nav-group-label">সেটিংস</span>
         <?php
         $navItems2 = [
           'rates'    => ['bi-cash-stack', 'Material Rates'],
-          'logs'     => ['bi-journal-text','Activity Logs'],
-          'settings' => ['bi-gear',       'সাইট সেটিংস'],
+          'logs'     => ['bi-journal-text', 'Activity Logs'],
+          'settings' => ['bi-gear', 'সাইট সেটিংস'],
         ];
-        foreach ($navItems2 as $key => [$icon, $label]):
+
+        foreach ($navItems2 as $key => $item):
+            $icon  = $item[0];
+            $label = $item[1];
         ?>
-        <a href="?page=admin-dashboard&tab=<?= $key ?>"
-           class="admin-nav-item <?= $activeTab===$key?'active':'' ?>">
+        <a href="<?= APP_URL ?>/admin-dashboard?tab=<?= $key ?>"
+          class="admin-nav-item <?= $activeTab === $key ? 'active' : '' ?>">
           <i class="bi <?= $icon ?>"></i>
           <span><?= $label ?></span>
         </a>
         <?php endforeach; ?>
       </div>
     </nav>
+
 
     <a href="?page=logout" class="admin-nav-item danger mt-auto">
       <i class="bi bi-box-arrow-right"></i>

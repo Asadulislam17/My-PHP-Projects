@@ -14,7 +14,8 @@ $allowed_pages = [
     'home', 'listing', 'property', 'login', 'register', 
     'dashboard', 'verify-otp', 'notifications', 'logout',
     'buyer-dashboard', 'agent-dashboard', 'admin-dashboard',
-    'add-property', 'tools', 'contact', 'payment' // এই লাইনগুলো যোগ করুন
+    'add-property', 'tools', 'contact', 'payment', 'profile',
+    'wishlist', 'blog', 'compare', 'forgot-password', 'my-inquiries' // এই লাইনগুলো যোগ করুন
 ];
 
 

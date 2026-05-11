@@ -7,14 +7,20 @@
     <title>Document</title>
 </head>
 <body>
-    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Id obcaecati, fugit explicabo autem commodi sit voluptates qui nisi magni et quidem necessitatibus culpa maiores amet, molestias deleniti sapiente? Neque, voluptatum.</p>
+    
+    <img id="myImage" src="C:\xampp\htdocs\My-PHP-Projects/test.png" width="200" height="150" alt="Sample Image">
+    <button id="resizeBtn">Change Size</button>
 
-    <button id="btn">click</button>
+    
 
     <script>
-        $('#btn').click(function(){
-            $('p').css("color", "red");
+        $(document).ready(function(){
+            $("#resizeBtn").click(function(){
+                $("#myImage").attr("width", "400");
+                $("#myImage").attr("height", "300");
+            });
         });
+
     </script>
 </body>
 </html>

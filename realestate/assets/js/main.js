@@ -138,3 +138,45 @@ style.textContent = `
     .suggestion-item:hover { background: #f8fafc; color: #C5A059; }
 `;
 document.head.appendChild(style);
+
+document.querySelectorAll(".wl-remove-form").forEach(form => {
+  form.addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const btn = this.querySelector("button");
+    const card = this.closest(".col-md-6");
+
+    btn.disabled = true;
+    btn.innerHTML = "⏳";
+
+    const formData = new FormData(this);
+
+    const res = await fetch(window.location.href, {
+      method: "POST",
+      body: formData
+    });
+
+    if (res.ok) {
+      card.style.transform = "scale(0.8)";
+      card.style.opacity = "0";
+
+      setTimeout(() => {
+        card.remove();
+      }, 300);
+    } else {
+      alert("Error removing item!");
+      btn.disabled = false;
+      btn.innerHTML = "❤️";
+    }
+  });
+});
+
+function updateWishlistCount() {
+  const count = document.querySelectorAll(".wishlist-card").length;
+  const headerCount = document.querySelector(".iph-content p");
+  if (headerCount) {
+    headerCount.textContent = `${count} টি property সংরক্ষিত`;
+  }
+}
+
+// call after remove

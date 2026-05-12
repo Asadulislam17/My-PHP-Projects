@@ -4,23 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <title>Document</title>
+    <title>AJAX Test</title>
 </head>
 <body>
     
-    <img id="myImage" src="C:\xampp\htdocs\My-PHP-Projects/test.png" width="200" height="150" alt="Sample Image">
+    <img id="myImage" src="test.png" width="200" height="150" alt="Sample Image">
     <button id="resizeBtn">Change Size</button>
+    <button id="btn">Data Show</button>
 
-    
+   
+    <div id="div1" style="margin-top: 20px; font-weight: bold;"></div>
 
     <script>
         $(document).ready(function(){
+            
             $("#resizeBtn").click(function(){
-                $("#myImage").attr("width", "400");
-                $("#myImage").attr("height", "300");
+                $("#myImage").attr({
+                    "width": "400",
+                    "height": "300"
+                });
+            });
+
+            
+            $("#btn").click(function(){
+                $.get("data.txt", function(data, status){
+                    $("#div1").html(data);
+                }).fail(function(){
+                    alert("ফাইলটি পাওয়া যায়নি বা কোনো সমস্যা হয়েছে!");
+                });
             });
         });
-
     </script>
 </body>
 </html>

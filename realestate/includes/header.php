@@ -25,6 +25,8 @@ $currentPage = $_GET['page'] ?? 'home';
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <!-- Custom CSS -->
   <link href="<?= APP_URL ?>/assets/css/style.css" rel="stylesheet">
+  <link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#C5A059">
 </head>
 <body>
 
@@ -138,7 +140,7 @@ $currentPage = $_GET['page'] ?? 'home';
           <!-- Notifications -->
           <a href="?page=notifications" class="btn btn-icon position-relative" title="Notifications">
             <i class="bi bi-bell"></i>
-            <span class="notif-badge">3</span>
+            <span class="notif-badge"></span>
           </a>
 
           <!-- User Dropdown -->

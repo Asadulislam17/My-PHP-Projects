@@ -201,127 +201,127 @@ class Property {
     // =========================================
     // ✅ GET ALL (with Filters + Pagination)
     // =========================================
-public function getAll(array $filters = [], int $page = 1, int $perPage = 12): array {
+    public function getAll(array $filters = [], int $page = 1, int $perPage = 12): array {
 
-    $where  = ["p.status = 'approved'"];
-    $params = [];
+        $where  = ["p.status = 'approved'"];
+        $params = [];
 
-    // =========================
-    // FILTERS
-    // =========================
-    if (!empty($filters['price_type'])) {
-        $where[]  = "p.price_type = ?";
-        $params[] = $filters['price_type'];
+        // =========================
+        // FILTERS
+        // =========================
+        if (!empty($filters['price_type'])) {
+            $where[]  = "p.price_type = ?";
+            $params[] = $filters['price_type'];
+        }
+
+        if (!empty($filters['type'])) {
+            $where[]  = "pt.slug = ?";
+            $params[] = $filters['type'];
+        }
+
+        if (!empty($filters['area_id'])) {
+            $where[]  = "p.area_id = ?";
+            $params[] = $filters['area_id'];
+        }
+
+        if (!empty($filters['price_min'])) {
+            $where[]  = "p.price >= ?";
+            $params[] = $filters['price_min'];
+        }
+
+        if (!empty($filters['price_max'])) {
+            $where[]  = "p.price <= ?";
+            $params[] = $filters['price_max'];
+        }
+
+        if (!empty($filters['bedrooms'])) {
+            $where[]  = "p.bedrooms >= ?";
+            $params[] = $filters['bedrooms'];
+        }
+
+        if (!empty($filters['keyword'])) {
+            $where[] = "(p.title LIKE ? OR p.address LIKE ? OR p.description LIKE ?)";
+            $kw = '%' . $filters['keyword'] . '%';
+            $params = array_merge($params, [$kw, $kw, $kw]);
+        }
+
+        if (!empty($filters['featured'])) {
+            $where[] = "p.is_featured = 1";
+        }
+
+        $whereSQL = implode(' AND ', $where);
+
+        // =========================
+        // SORT
+        // =========================
+        $sort = match($filters['sort'] ?? 'newest') {
+            'price_asc'  => 'p.price ASC',
+            'price_desc' => 'p.price DESC',
+            'popular'    => 'p.views_count DESC',
+            default      => 'p.created_at DESC'
+        };
+
+        $offset = ($page - 1) * $perPage;
+
+        // =========================
+        // MAIN QUERY (SAFE + CLEAN)
+        // =========================
+        $rows = $this->db->query(
+            "SELECT 
+                p.*,
+
+                pt.name AS type_name,
+                pt.slug AS type_slug,
+
+                COALESCE(a.name, 'Unknown Area')     AS area_name,
+                COALESCE(d.name, 'Unknown District') AS district_name,
+
+                COALESCE(u.name, 'Unknown Agent')    AS agent_name,
+                COALESCE(u.phone, '')               AS agent_phone,
+                COALESCE(u.email, '')               AS agent_email,
+                u.avatar                            AS agent_avatar,
+
+                (SELECT image_path 
+                FROM property_images 
+                WHERE property_id = p.id 
+                AND is_cover = 1 
+                LIMIT 1) AS cover_image
+
+            FROM properties p
+
+            JOIN property_types pt ON pt.id = p.type_id
+
+            LEFT JOIN areas a      ON a.id = p.area_id
+            LEFT JOIN districts d  ON d.id = a.district_id
+            LEFT JOIN users u      ON u.id = p.user_id
+
+            WHERE $whereSQL
+            ORDER BY $sort
+            LIMIT $perPage OFFSET $offset",
+            $params
+        );
+
+        // =========================
+        // COUNT QUERY (FIXED)
+        // =========================
+        $total = $this->db->queryOne(
+            "SELECT COUNT(*) AS cnt
+            FROM properties p
+            JOIN property_types pt ON pt.id = p.type_id
+            LEFT JOIN areas a      ON a.id = p.area_id
+            LEFT JOIN districts d  ON d.id = a.district_id
+            WHERE $whereSQL",
+            $params
+        );
+
+        return [
+            'data'         => $rows,
+            'total'        => $total['cnt'] ?? 0,
+            'per_page'     => $perPage,
+            'current_page' => $page,
+            'last_page'    => (int) ceil(($total['cnt'] ?? 0) / $perPage),
+        ];
     }
-
-    if (!empty($filters['type'])) {
-        $where[]  = "pt.slug = ?";
-        $params[] = $filters['type'];
-    }
-
-    if (!empty($filters['area_id'])) {
-        $where[]  = "p.area_id = ?";
-        $params[] = $filters['area_id'];
-    }
-
-    if (!empty($filters['price_min'])) {
-        $where[]  = "p.price >= ?";
-        $params[] = $filters['price_min'];
-    }
-
-    if (!empty($filters['price_max'])) {
-        $where[]  = "p.price <= ?";
-        $params[] = $filters['price_max'];
-    }
-
-    if (!empty($filters['bedrooms'])) {
-        $where[]  = "p.bedrooms >= ?";
-        $params[] = $filters['bedrooms'];
-    }
-
-    if (!empty($filters['keyword'])) {
-        $where[] = "(p.title LIKE ? OR p.address LIKE ? OR p.description LIKE ?)";
-        $kw = '%' . $filters['keyword'] . '%';
-        $params = array_merge($params, [$kw, $kw, $kw]);
-    }
-
-    if (!empty($filters['featured'])) {
-        $where[] = "p.is_featured = 1";
-    }
-
-    $whereSQL = implode(' AND ', $where);
-
-    // =========================
-    // SORT
-    // =========================
-    $sort = match($filters['sort'] ?? 'newest') {
-        'price_asc'  => 'p.price ASC',
-        'price_desc' => 'p.price DESC',
-        'popular'    => 'p.views_count DESC',
-        default      => 'p.created_at DESC'
-    };
-
-    $offset = ($page - 1) * $perPage;
-
-    // =========================
-    // MAIN QUERY (SAFE + CLEAN)
-    // =========================
-    $rows = $this->db->query(
-        "SELECT 
-            p.*,
-
-            pt.name AS type_name,
-            pt.slug AS type_slug,
-
-            COALESCE(a.name, 'Unknown Area')     AS area_name,
-            COALESCE(d.name, 'Unknown District') AS district_name,
-
-            COALESCE(u.name, 'Unknown Agent')    AS agent_name,
-            COALESCE(u.phone, '')               AS agent_phone,
-            COALESCE(u.email, '')               AS agent_email,
-            u.avatar                            AS agent_avatar,
-
-            (SELECT image_path 
-             FROM property_images 
-             WHERE property_id = p.id 
-             AND is_cover = 1 
-             LIMIT 1) AS cover_image
-
-        FROM properties p
-
-        JOIN property_types pt ON pt.id = p.type_id
-
-        LEFT JOIN areas a      ON a.id = p.area_id
-        LEFT JOIN districts d  ON d.id = a.district_id
-        LEFT JOIN users u      ON u.id = p.user_id
-
-        WHERE $whereSQL
-        ORDER BY $sort
-        LIMIT $perPage OFFSET $offset",
-        $params
-    );
-
-    // =========================
-    // COUNT QUERY (FIXED)
-    // =========================
-    $total = $this->db->queryOne(
-        "SELECT COUNT(*) AS cnt
-         FROM properties p
-         JOIN property_types pt ON pt.id = p.type_id
-         LEFT JOIN areas a      ON a.id = p.area_id
-         LEFT JOIN districts d  ON d.id = a.district_id
-         WHERE $whereSQL",
-        $params
-    );
-
-    return [
-        'data'         => $rows,
-        'total'        => $total['cnt'] ?? 0,
-        'per_page'     => $perPage,
-        'current_page' => $page,
-        'last_page'    => (int) ceil(($total['cnt'] ?? 0) / $perPage),
-    ];
-}
 
     // =========================================
     // ✅ GET SINGLE PROPERTY

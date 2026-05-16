@@ -162,7 +162,8 @@ if (!$coverImage && !empty($prop['images'])) {
               ৳<?= number_format($prop['price']) ?>
               <?= $prop['price_type'] === 'rent' ? '<small>/মাস</small>' : '' ?>
             </div>
-            <?php if ($prop['size_sqft']): ?>
+            <!-- এখানে শর্তটি পরিবর্তন করে > 0 যোগ করা হয়েছে যেন শূন্য দিয়ে ভাগ না হয় -->
+            <?php if (!empty($prop['size_sqft']) && $prop['size_sqft'] > 0): ?>
             <div class="price-per-sqft">
               ৳<?= number_format($prop['price'] / $prop['size_sqft'], 0) ?>/sqft
             </div>

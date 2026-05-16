@@ -2338,3 +2338,864 @@ h1,h2,h3,h4,h5,h6 { font-family: 'Montserrat', sans-serif; }
 .inq-search::placeholder {
   color: rgba(255,255,255,0.4);
 }
+/* ── ৩ডি নেক্সট-জেন হিরো ডিজাইন ── */
+.hero-3d-section {
+  position: relative;
+  background: #090d16;
+  padding: 100px 0 140px 0;
+  overflow: hidden;
+  font-family: 'Hind Siliguri', sans-serif;
+}
+
+/* ৩ডি লাইটিং অর্বস (সংশোধিত ক্লাস নেম) */
+.glow-3d-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(140px);
+  opacity: 0.15;
+  z-index: 1;
+}
+.orb-1 { width: 400px; height: 400px; background: #C5A059; top: -10%; right: 10%; }
+.orb-2 { width: 350px; height: 350px; background: #3b82f6; bottom: -5%; left: 5%; }
+
+.hero-overlay-mesh {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 30px 30px;
+  z-index: 2;
+}
+
+/* টেক্সট ও এনিমেশন */
+.hero-badge-3d {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px 16px;
+  border-radius: 50px;
+  color: #94a3b8;
+  font-size: 14px;
+  display: inline-block;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.hero-title-3d {
+  font-size: 3.25rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #ffffff;
+  margin-top: 20px;
+}
+
+.text-gradient-3d {
+  background: linear-gradient(135deg, #fff 0%, #C5A059 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 10px 30px rgba(197,160,89,0.2);
+}
+
+.hero-subtitle-3d {
+  color: #94a3b8;
+  font-size: 1.15rem;
+  margin-top: 15px;
+}
+
+/* বাম পাশের ৩ডি মিনি স্ট্যাটাস */
+.hero-stats-3d-mini {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-top: 35px;
+}
+.stat-box-3d {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 15px;
+  border-radius: 16px;
+  backdrop-filter: blur(5px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.stat-box-3d:hover {
+  transform: translateY(-5px) rotateX(5px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+  border-color: rgba(197, 160, 89, 0.3);
+}
+.stat-box-3d .stat-val {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #C5A059;
+}
+.stat-box-3d .stat-lbl {
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* ফ্লোটিং ৩ডি গ্লাস কার্ড */
+.hero-search-card-3d {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(25px);
+  border-radius: 28px;
+  padding: 35px;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+  transform: perspective(1000px) rotateY(-5px);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 10;
+  position: relative;
+}
+.hero-search-card-3d:hover {
+  transform: perspective(1000px) rotateY(0deg) translateY(-5px);
+}
+
+/* ৩ডি সার্চ ট্যাব */
+.search-tabs-3d {
+  display: flex;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 6px;
+  border-radius: 16px;
+  margin-bottom: 25px;
+}
+.search-tab-3d {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: transparent;
+  border: none;
+  padding: 12px;
+  color: #94a3b8;
+  font-weight: 600;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.search-tab-3d.active {
+  background: linear-gradient(135deg, #C5A059 0%, #a17f3f 100%);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(197, 160, 89, 0.3);
+}
+.tab-icon-wrapper {
+  width: 28px;
+  height: 28px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ৩ডি ইনপুট ব্লকস */
+.input-block-3d label {
+  color: #94a3b8;
+  font-size: 14px;
+  margin-bottom: 8px;
+  display: block;
+}
+.field-input-3d {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 14px 18px;
+  border-radius: 14px;
+  color: #fff;
+  outline: none;
+  transition: all 0.3s ease;
+}
+.field-input-3d:focus {
+  border-color: #C5A059;
+  background: rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 0 4px rgba(197, 160, 89, 0.15);
+}
+
+/* ৩ডি লাক্সারি সাবমিট বাটন */
+.search-submit-btn-3d {
+  width: 100%;
+  margin-top: 25px;
+  background: linear-gradient(135deg, #fff 0%, #e2e8f0 100%);
+  border: none;
+  padding: 16px;
+  border-radius: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  box-shadow: 0 15px 30px rgba(255,255,255,0.05);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+}
+.search-submit-btn-3d:hover {
+  background: linear-gradient(135deg, #C5A059 0%, #a17f3f 100%);
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(197, 160, 89, 0.4);
+}
+
+/* পপুলার ট্যাগস */
+.popular-tags-3d {
+  margin-top: 25px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+.popular-tags-3d .title { color: #64748b; }
+.popular-tags-3d a {
+  color: #94a3b8;
+  text-decoration: none;
+  background: rgba(255,255,255,0.02);
+  padding: 4px 10px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+.popular-tags-3d a:hover {
+  color: #C5A059;
+  background: rgba(197, 160, 89, 0.1);
+}
+/* ============================================
+   ৩ডি মেটা-নেভিগেশন বার সিএসএস 
+   ============================================ */
+.hero-nav-3d {
+  background: rgba(9, 13, 22, 0.75) !important;
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 15px 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  font-family: 'Hind Siliguri', sans-serif;
+}
+.brand-icon-3d {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #C5A059 0%, #a17f3f 100%);
+  color: #fff;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 15px rgba(197, 160, 89, 0.3);
+}
+.brand-name {
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.35rem;
+  letter-spacing: 0.5px;
+  display: block;
+  line-height: 1.1;
+}
+.text-accent-3d { color: #C5A059 !important; }
+.brand-tagline-3d {
+  color: #64748b;
+  font-size: 11px;
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.nav-link-3d {
+  color: #94a3b8 !important;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 8px 16px !important;
+  border-radius: 10px;
+  transition: all 0.25s ease;
+}
+.nav-link-3d:hover, .nav-link-3d.active {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.04);
+}
+.nav-link-3d.active {
+  color: #C5A059 !important;
+  box-shadow: inset 0 -2px 0 #C5A059;
+}
+.btn-icon-3d {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.btn-icon-3d:hover {
+  background: rgba(197, 160, 89, 0.1);
+  border-color: rgba(197, 160, 89, 0.3);
+  color: #fff;
+}
+.lang-text-sm { font-size: 11px; font-weight: 700; color: #94a3b8; }
+.btn-login-3d {
+  background: linear-gradient(135deg, #fff 0%, #e2e8f0 100%);
+  color: #0f172a !important;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  box-shadow: 0 4px 15px rgba(255,255,255,0.05);
+  transition: all 0.25s ease;
+}
+.btn-login-3d:hover {
+  background: linear-gradient(135deg, #C5A059 0%, #a17f3f 100%);
+  color: #fff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(197, 160, 89, 0.3);
+}
+.dropdown-menu-3d {
+  background: rgba(15, 23, 42, 0.95) !important;
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 16px !important;
+  padding: 10px !important;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+}
+.dropdown-menu-3d .dropdown-item {
+  color: #94a3b8 !important;
+  padding: 10px 14px !important;
+  border-radius: 10px !important;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+.dropdown-menu-3d .dropdown-item:hover {
+  background: rgba(197, 160, 89, 0.15) !important;
+  color: #C5A059 !important;
+}
+.dropdown-divider-3d { border-color: rgba(255, 255, 255, 0.06) !important; }
+.user-menu-btn-3d {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 12px;
+}
+.user-avatar-3d { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
+.user-avatar-placeholder-3d {
+  width: 28px; height: 28px; background: #C5A059; color: #fff;
+  border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 13px;
+}
+.dropdown-header-3d { padding: 10px; display: flex; flex-direction: column; }
+.dropdown-header-3d strong { color: #fff; font-size: 14px; }
+.dropdown-header-3d small { color: #64748b; font-size: 12px; margin-bottom: 6px; }
+.role-badge-3d {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 4px; display: inline-block; width: max-content; color: #fff;
+}
+.notif-badge-3d {
+  position: absolute; top: 8px; right: 8px; width: 8px; height: 8px;
+  background: #ef4444; border-radius: 50%; box-shadow: 0 0 0 2px #090d16;
+}
+/* ── ৩ডি ক্যাটাগরি ও প্রপার্টি স্টাইল ── */
+.bg-3d-dark { background: #0c111d; }
+.bg-3d-deep { background: #090d16; }
+
+.section-badge-3d-accent {
+  background: rgba(197, 160, 89, 0.1);
+  border: 1px solid rgba(197, 160, 89, 0.2);
+  padding: 6px 14px;
+  border-radius: 50px;
+  color: #C5A059;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* ৩ডি ক্যাটাগরি কার্ড */
+.category-card-3d {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 25px 15px;
+  border-radius: 20px;
+  text-decoration: none !important;
+  text-center: center;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: perspective(1000px) rotateX(0deg);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.category-card-3d h6 {
+  color: #fff;
+  font-weight: 700;
+  margin: 15px 0 5px 0;
+  font-size: 0.95rem;
+}
+
+.category-card-3d small {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.cat-icon-3d {
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  background: rgba(255, 255, 255, 0.04);
+  color: #94a3b8;
+  transition: all 0.3s;
+}
+
+/* ইন্টারেক্টিভ ৩ডি হোভার ইফেক্টস */
+.category-card-3d:hover {
+  transform: translateY(-8px) perspective(1000px) rotateX(10deg);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+/* কালার গ্লো স্কিম */
+.color-blue:hover { border-color: #3b82f6; } .color-blue:hover .cat-icon-3d { background: rgba(59,130,246,0.15); color: #3b82f6; }
+.color-gold:hover { border-color: #C5A059; } .color-gold:hover .cat-icon-3d { background: rgba(197,160,89,0.15); color: #C5A059; }
+.color-green:hover { border-color: #10b981; } .color-green:hover .cat-icon-3d { background: rgba(16,185,129,0.15); color: #10b981; }
+.color-earth:hover { border-color: #f59e0b; } .color-earth:hover .cat-icon-3d { background: rgba(245,158,11,0.15); color: #f59e0b; }
+.color-purple:hover { border-color: #8b5cf6; } .color-purple:hover .cat-icon-3d { background: rgba(139,92,246,0.15); color: #8b5cf6; }
+.color-red:hover { border-color: #ef4444; } .color-red:hover .cat-icon-3d { background: rgba(239,68,68,0.15); color: #ef4444; }
+
+/* সব দেখুন ৩ডি লিংক বাটন */
+.btn-link-accent-3d {
+  color: #C5A059;
+  font-weight: 700;
+  text-decoration: none;
+  background: rgba(197, 160, 89, 0.05);
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(197, 160, 89, 0.1);
+  transition: all 0.25s ease;
+}
+.btn-link-accent-3d:hover {
+  background: linear-gradient(135deg, #C5A059 0%, #a17f3f 100%);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(197, 160, 89, 0.3);
+}
+
+/* ৩ডি প্রপার্টি কার্ড র‍্যাপার */
+.card-wrapper-3d .card {
+  background: rgba(15, 23, 42, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  border-radius: 20px !important;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  transition: all 0.4s ease;
+}
+.card-wrapper-3d .card:hover {
+  transform: translateY(-10px) scale(1.02);
+  border-color: rgba(197, 160, 89, 0.3) !important;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.5) !important;
+}
+.card-wrapper-3d .card-title a { color: #fff !important; }
+.card-wrapper-3d .card-title a:hover { color: #C5A059 !important; }
+
+/* এম্পটি স্টেট ৩ডি গ্লাস */
+.empty-state-3d {
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 24px;
+  backdrop-filter: blur(10px);
+}
+/* ── ৩ডি কন্টেন্ট ফিনিশিং পার্ট স্টাইল ── */
+.bg-3d-deep-features { background: #090d16; }
+
+/* ৩ডি ফিচার কার্ড */
+.feature-card-3d {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  padding: 30px 20px;
+  border-radius: 24px;
+  backdrop-filter: blur(10px);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: perspective(1000px) rotateY(0deg);
+  height: 100%;
+}
+.feature-card-3d:hover {
+  transform: translateY(-8px) perspective(1000px) rotateY(-5deg);
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(197, 160, 89, 0.3);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+.feature-icon-3d {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, rgba(197,160,89,0.15) 0%, rgba(197,160,89,0.02) 100%);
+  border: 1px solid rgba(197, 160, 89, 0.2);
+  color: #C5A059;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  margin-bottom: 20px;
+  transition: all 0.3s;
+}
+.feature-card-3d:hover .feature-icon-3d {
+  background: linear-gradient(135deg, #C5A059 0%, #a17f3f 100%);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(197, 160, 89, 0.3);
+}
+.feature-card-3d h5 {
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.15rem;
+  margin-bottom: 12px;
+}
+.feature-card-3d p {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+/* ৩ডি গ্লাস মেটা-CTA */
+.cta-section-3d {
+  background: #090d16;
+  padding: 60px 0 100px 0;
+}
+.cta-card-3d {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(20px);
+  border-radius: 32px;
+  padding: 50px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+}
+.cta-card-3d h2 {
+  color: #fff;
+  font-weight: 800;
+  font-size: 2.2rem;
+  margin-bottom: 12px;
+}
+.cta-card-3d p {
+  color: #94a3b8;
+  font-size: 1.1rem;
+}
+.btn-cta-luxury {
+  background: linear-gradient(135deg, #fff 0%, #e2e8f0 100%);
+  color: #0f172a !important;
+  padding: 14px 28px;
+  border-radius: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 10px 25px rgba(255,255,255,0.05);
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+}
+.btn-cta-luxury:hover {
+  background: linear-gradient(135deg, #C5A059 0%, #a17f3f 100%);
+  color: #fff !important;
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(197, 160, 89, 0.3);
+}
+.btn-cta-outline-luxury {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff !important;
+  padding: 14px 28px;
+  border-radius: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+}
+.btn-cta-outline-luxury:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: #fff;
+  transform: translateY(-3px);
+}
+/* ============================================
+   GLOBAL ULTRA-3D GLASSMORPHISM SYSTEM
+   ============================================ */
+:root {
+  --bg-dark-3d: #090d16;
+  --bg-card-3d: rgba(15, 23, 42, 0.55);
+  --border-glow-3d: rgba(255, 255, 255, 0.08);
+  --border-focus-3d: #C5A059;
+  --text-muted-3d: #94a3b8;
+  --gradient-gold-3d: linear-gradient(135deg, #C5A059 0%, #a17f3f 100%);
+  --gradient-white-3d: linear-gradient(135deg, #fff 0%, #e2e8f0 100%);
+}
+
+/* ৩ডি গ্লোবাল সেকশন ব্যাকগ্রাউন্ড */
+.section-pad-3d {
+  position: relative;
+  background: var(--bg-dark-3d);
+  padding: 80px 0 100px 0;
+  overflow: hidden;
+  font-family: 'Hind Siliguri', sans-serif;
+}
+
+/* ইউনিভার্সাল ৩ডি লাইটিং অর্বস ও মেস */
+.glow-orb-3d {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(140px);
+  opacity: 0.12;
+  z-index: 1;
+}
+.orb-gold { width: 400px; height: 400px; background: #C5A059; }
+.orb-blue { width: 450px; height: 450px; background: #3b82f6; }
+
+.mesh-overlay-3d {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(255,255,255,0.01) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.01) 1px, transparent 1px);
+  background-size: 30px 30px;
+  z-index: 2;
+}
+
+/* ৩ডি টেক্সট গ্রেডিয়েন্ট ও ব্যাজ */
+.text-gradient-meta {
+  background: linear-gradient(135deg, #fff 0%, #C5A059 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.badge-meta-3d {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px 16px;
+  border-radius: 50px;
+  color: var(--text-muted-3d);
+  font-size: 14px;
+  display: inline-block;
+  backdrop-filter: blur(10px);
+}
+
+/* মাস্টার ৩ডি ফ্লোটিং গ্লাস কার্ড */
+.card-glass-3d {
+  background: var(--bg-card-3d);
+  border: 1px solid var(--border-glow-3d);
+  backdrop-filter: blur(25px);
+  border-radius: 28px;
+  padding: 40px;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+  transform: perspective(1000px) rotateY(-3deg);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 10;
+}
+.card-glass-3d:hover {
+  transform: perspective(1000px) rotateY(0deg) translateY(-5px);
+}
+
+/* ইউনিভার্সাল ৩ডি ইনপুট সিস্টেম */
+.input-block-meta label {
+  color: var(--text-muted-3d);
+  font-size: 14px;
+  margin-bottom: 8px;
+  display: block;
+}
+.input-field-meta {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 14px 18px;
+  border-radius: 14px;
+  color: #fff;
+  outline: none;
+  transition: all 0.3s ease;
+}
+.input-field-meta:focus {
+  border-color: var(--border-focus-3d);
+  background: rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 0 4px rgba(197, 160, 89, 0.15);
+}
+
+/* ৩ডি প্রিমিয়াম লাক্সারি বাটন */
+.btn-submit-3d {
+  width: 100%;
+  background: var(--gradient-white-3d);
+  border: none;
+  padding: 16px;
+  border-radius: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  box-shadow: 0 15px 30px rgba(255,255,255,0.05);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+}
+.btn-submit-3d:hover {
+  background: var(--gradient-gold-3d);
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(197, 160, 89, 0.4);
+}
+
+.auth-3d-section {
+  position: relative;
+  background: #090d16;
+  min-height: 100vh;
+  overflow: hidden;
+  font-family: 'Hind Siliguri', sans-serif;
+}
+.glow-3d-orb-auth {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(140px);
+  opacity: 0.12;
+  z-index: 1;
+}
+.orb-auth-1 { width: 400px; height: 400px; background: #C5A059; top: -10%; left: -10%; }
+.orb-auth-2 { width: 450px; height: 450px; background: #3b82f6; bottom: -10%; right: -10%; }
+.auth-mesh-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(255,255,255,0.01) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.01) 1px, transparent 1px);
+  background-size: 30px 30px;
+  z-index: 2;
+}
+.auth-card-3d {
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(25px);
+  border-radius: 28px;
+  padding: 40px;
+  width: 100%;
+  max-width: 520px;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+  transform: perspective(1000px) rotateX(2deg);
+  transition: transform 0.5s ease;
+  z-index: 10;
+}
+.auth-card-3d:hover {
+  transform: perspective(1000px) rotateX(0deg) translateY(-5px);
+}
+.text-muted-3d { color: #94a3b8; font-size: 14px; }
+.input-block-3d-auth label { color: #94a3b8; font-size: 14px; margin-bottom: 8px; display: block; }
+.field-input-3d-auth {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 12px 16px;
+  border-radius: 12px;
+  color: #fff;
+  outline: none;
+  transition: all 0.3s ease;
+}
+.field-input-3d-auth:focus {
+  border-color: #C5A059;
+  background: rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 0 4px rgba(197, 160, 89, 0.15);
+}
+.border-3d { border: 1px solid rgba(255, 255, 255, 0.06) !important; background: rgba(0,0,0,0.15) !important; }
+.form-check-3d { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+.radio-input-3d { appearance: none; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; outline: none; transition: all 0.2s; cursor: pointer; position: relative; }
+.radio-input-3d:checked { border-color: #C5A059; background: #C5A059; box-shadow: 0 0 10px rgba(197, 160, 89, 0.5); }
+.radio-input-3d:checked::after { content: ''; width: 6px; height: 6px; background: #0f172a; border-radius: 50%; position: absolute; top: 4px; left: 4px; }
+.radio-label-3d { color: #fff; font-size: 14px; cursor: pointer; }
+.auth-submit-btn-3d {
+  background: linear-gradient(135deg, #fff 0%, #e2e8f0 100%);
+  border: none; padding: 14px; border-radius: 12px; font-weight: 700; color: #0f172a;
+  box-shadow: 0 15px 30px rgba(255,255,255,0.05);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+}
+.auth-submit-btn-3d:hover {
+  background: linear-gradient(135deg, #C5A059 0%, #a17f3f 100%);
+  color: #fff; transform: translateY(-2px); box-shadow: 0 12px 25px rgba(197, 160, 89, 0.4);
+}
+.is-invalid-3d { border-color: #ef4444 !important; background: rgba(239, 64, 64, 0.05) !important; }
+.invalid-feedback-3d { color: #ef4444; font-size: 12px; margin-top: 6px; display: block; }
+.alert-danger-3d { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; padding: 12px; border-radius: 12px; font-size: 14px; }
+
+.lang-switcher {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 4px;
+  border-radius: 8px;
+  z-index: 100;
+}
+.lang-switcher a {
+  color: #94a3b8;
+  text-decoration: none;
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: 6px;
+  transition: all 0.3s;
+  display: inline-block;
+}
+.lang-switcher a.active {
+  background: #C5A059;
+  color: #0f172a;
+  font-weight: 600;
+}
+/* ল্যাঙ্গুয়েজ সুইচার কন্টেইনার পজিশন */
+.lang-switcher {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 100;
+}
+
+/* ৩D গ্লাস-মরফিজম ক্যাপসুল বাটন */
+.lang-toggle-capsule {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(15px);
+  padding: 8px 16px;
+  border-radius: 30px; /* ক্যাপসুল শেপ */
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+/* বুটস্ট্র্যাপ আইকন স্টাইল */
+.lang-icon {
+  color: #94a3b8;
+  font-size: 14px;
+  margin-right: 8px;
+  transition: color 0.3s;
+}
+
+/* সাধারণ ল্যাঙ্গুয়েজ টেক্সট */
+.lang-text {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  transition: all 0.3s;
+}
+
+/* মাঝখানের স্ল্যাশ (/) ডিভাইডার */
+.lang-divider {
+  color: rgba(255, 255, 255, 0.15);
+  font-size: 11px;
+  margin: 0 5px;
+}
+
+/* যে ভাষাটি বর্তমানে চালু (Active) আছে তার ৩D গোল্ডেন গ্লো */
+.lang-toggle-capsule .active-lang {
+  color: #C5A059;
+  text-shadow: 0 0 10px rgba(197, 160, 89, 0.6);
+}
+
+/* হোভার ইফেক্ট */
+.lang-toggle-capsule:hover {
+  border-color: rgba(197, 160, 89, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(197, 160, 89, 0.15);
+}
+
+.lang-toggle-capsule:hover .lang-icon {
+  color: #fff;
+}
+
+/* ক্লিক করার মুহূর্তের ইফেক্ট */
+.lang-toggle-capsule:active {
+  transform: translateY(0);
+}
+

@@ -122,4 +122,21 @@ function renderPropertyCard(array $prop, Auth $auth): string {
 
     </div>";
 }
+
+function getLang() {
+    // যদি URL এ lang প্যারামিটার পাঠানো হয়, তবে সেশন আপডেট হবে
+    if (isset($_GET['lang'])) {
+        $requestedLang = trim($_GET['lang']);
+        $_SESSION['lang'] = ($requestedLang === 'en') ? 'en' : 'bn';
+    }
+    
+    // সেশনে কিছু না থাকলে ডিফল্ট বাংলা ('bn') রিটার্ন করবে
+    return $_SESSION['lang'] ?? 'bn';
+}
+
+function __($bn, $en) {
+    return getLang() === 'en' ? $en : $bn;
+}
+
+
 ?>

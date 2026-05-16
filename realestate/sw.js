@@ -6,26 +6,46 @@
  * ══════════════════════════════════════════════
  */
 
+// const SW_VERSION    = 'v2.0.0';
+// const CACHE_STATIC  = `re-static-${SW_VERSION}`;
+// const CACHE_DYNAMIC = `re-dynamic-${SW_VERSION}`;
+// const CACHE_IMAGES  = `re-images-${SW_VERSION}`;
+// const CACHE_API     = `re-api-${SW_VERSION}`;
+
+// /* ── Files to precache on install ── */
+// const PRECACHE_URLS = [
+//   './',
+//   '/?page=home',
+//   '/?page=listing',
+//   '/?page=tools&tool=emi',
+//   '/assets/css/style.css',
+//   '/assets/js/main.js',
+//   '/assets/images/no-image.webp',
+//   '/assets/images/logo.webp',
+//   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css',
+//   'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css',
+//   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js',
+// ];
+
 const SW_VERSION    = 'v2.0.0';
 const CACHE_STATIC  = `re-static-${SW_VERSION}`;
 const CACHE_DYNAMIC = `re-dynamic-${SW_VERSION}`;
 const CACHE_IMAGES  = `re-images-${SW_VERSION}`;
 const CACHE_API     = `re-api-${SW_VERSION}`;
 
-/* ── Files to precache on install ── */
+/* ── সাব-ফোল্ডারের জন্য সংশোধিত ফাইললিস্ট (শুরুতে / দেওয়া যাবে না) ── */
 const PRECACHE_URLS = [
-  '/',
-  '/?page=home',
-  '/?page=listing',
-  '/?page=tools&tool=emi',
-  '/assets/css/style.css',
-  '/assets/js/main.js',
-  '/assets/images/no-image.webp',
-  '/assets/images/logo.webp',
+  './',                                 // প্রজেক্টের মেইন রুট ফোল্ডার
+  'index.php',                          // মেইন ইনডেক্স ফাইল
+  'manifest.json',                      // ম্যানিফেস্ট ফাইল
+  'assets/css/style.css',               // রিলেটিভ পাথ (শুরুতে স্ল্যাশ ছাড়া)
+  'assets/js/main.js',
+  // এক্সটার্নাল সিডিএন লিঙ্কগুলো ক্যাশ করা যাবে:
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css',
   'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css',
-  'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js',
+  'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js'
 ];
+
 
 /* ── Offline fallback page ── */
 const OFFLINE_PAGE  = '/offline.html';

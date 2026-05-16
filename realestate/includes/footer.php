@@ -9,8 +9,8 @@
         <!-- Brand Column -->
         <div class="col-lg-4 col-md-6">
           <div class="footer-brand">
-            <h4><i class="bi bi-buildings-fill me-2"></i>Real<span class="text-accent">Estate</span> BD</h4>
-            <p>বাংলাদেশের সেরা ও বিশ্বস্ত রিয়েল এস্টেট প্ল্যাটফর্ম। আপনার স্বপ্নের বাড়ি খুঁজে নিন।</p>
+            <h4><i class="bi bi-buildings-fill me-2"></i>Omni<span class="text-accent">Estate</span> BD</h4>
+            <p><?= __('বাংলাদেশের সেরা ও বিশ্বস্ত রিয়েল এস্টেট প্ল্যাটফর্ম। আপনার স্বপ্নের বাড়ি খুঁজে নিন।', 'The best and most trusted real estate platform in Bangladesh. Find your dream home.') ?></p>
             <div class="social-links">
               <a href="#" class="social-link"><i class="bi bi-facebook"></i></a>
               <a href="#" class="social-link"><i class="bi bi-instagram"></i></a>
@@ -22,47 +22,47 @@
 
         <!-- Quick Links -->
         <div class="col-lg-2 col-md-6">
-          <h6 class="footer-heading">দ্রুত লিঙ্ক</h6>
+          <h6 class="footer-heading"><?= __('দ্রুত লিঙ্ক', 'Quick Links') ?></h6>
           <ul class="footer-links">
-            <li><a href="?page=home">হোম</a></li>
-            <li><a href="?page=listing">সব প্রপার্টি</a></li>
-            <li><a href="?page=listing&price_type=sale">বিক্রয়</a></li>
-            <li><a href="?page=listing&price_type=rent">ভাড়া</a></li>
-            <li><a href="?page=blog">ব্লগ</a></li>
-            <li><a href="?page=contact">যোগাযোগ</a></li>
+            <li><a href="?page=home"><?= __('হোম', 'Home') ?></a></li>
+            <li><a href="?page=listing"><?= __('সব প্রপার্টি', 'All Properties') ?></a></li>
+            <li><a href="?page=listing&price_type=sale"><?= __('বিক্রয়', 'Buy') ?></a></li>
+            <li><a href="?page=listing&price_type=rent"><?= __('ভাড়া', 'Rent') ?></a></li>
+            <li><a href="?page=blog"><?= __('ব্লগ', 'Blog') ?></a></li>
+            <li><a href="?page=contact"><?= __('যোগাযোগ', 'Contact') ?></a></li>
           </ul>
         </div>
 
         <!-- Property Types -->
         <div class="col-lg-2 col-md-6">
-          <h6 class="footer-heading">প্রপার্টি টাইপ</h6>
+          <h6 class="footer-heading"><?= __('প্রপার্টি টাইপ', 'Property Types') ?></h6>
           <ul class="footer-links">
-            <li><a href="?page=listing&type=apartment">অ্যাপার্টমেন্ট</a></li>
-            <li><a href="?page=listing&type=villa">ভিলা</a></li>
-            <li><a href="?page=listing&type=commercial">কমার্শিয়াল</a></li>
-            <li><a href="?page=listing&type=land">জমি</a></li>
-            <li><a href="?page=listing&type=office">অফিস স্পেস</a></li>
+            <li><a href="?page=listing&type=apartment"><?= __('অ্যাপার্টমেন্ট', 'Apartment') ?></a></li>
+            <li><a href="?page=listing&type=villa"><?= __('ভিলা', 'Villa') ?></a></li>
+            <li><a href="?page=listing&type=commercial"><?= __('কমার্শিয়াল', 'Commercial') ?></a></li>
+            <li><a href="?page=listing&type=land"><?= __('জমি', 'Land') ?></a></li>
+            <li><a href="?page=listing&type=office"><?= __('অফিস স্পেস', 'Office Space') ?></a></li>
           </ul>
         </div>
 
         <!-- Tools & Services -->
         <div class="col-lg-2 col-md-6">
-          <h6 class="footer-heading">টুলস</h6>
+          <h6 class="footer-heading"><?= __('টুলস', 'Tools') ?></h6>
           <ul class="footer-links">
-            <li><a href="?page=tools&tool=emi">EMI Calculator</a></li>
-            <li><a href="?page=tools&tool=estimator">নির্মাণ খরচ</a></li>
-            <li><a href="?page=compare">প্রপার্টি তুলনা</a></li>
-            <li><a href="?page=subscription">Agent Plan</a></li>
+            <li><a href="?page=tools&tool=emi"><?= __('EMI Calculator', 'EMI Calculator') ?></a></li>
+            <li><a href="?page=tools&tool=estimator"><?= __('নির্মাণ খরচ', 'Construction Cost') ?></a></li>
+            <li><a href="?page=compare"><?= __('প্রপার্টি তুলনা', 'Compare Properties') ?></a></li>
+            <li><a href="?page=subscription"><?= __('Agent Plan', 'Agent Plan') ?></a></li>
           </ul>
         </div>
 
         <!-- Contact -->
         <div class="col-lg-2 col-md-6">
-          <h6 class="footer-heading">যোগাযোগ</h6>
+          <h6 class="footer-heading"><?= __('যোগাযোগ', 'Contact Info') ?></h6>
           <ul class="footer-contact">
             <li>
               <i class="bi bi-geo-alt"></i>
-              <span>গুলশান-১, ঢাকা-১২১২</span>
+              <span><?= __('গুলশান-১, ঢাকা-১২১২', 'Gulshan-1, Dhaka-1212') ?></span>
             </li>
             <li>
               <i class="bi bi-telephone"></i>
@@ -74,7 +74,7 @@
             </li>
             <li>
               <i class="bi bi-clock"></i>
-              <span>শনি–বৃহ: ৯টা–৬টা</span>
+              <span><?= __('শনি–বৃহ: ৯টা–৬টা', 'Sat–Thu: 9am–6pm') ?></span>
             </li>
           </ul>
         </div>
@@ -88,14 +88,14 @@
     <div class="container">
       <div class="row align-items-center">
         <div class="col-md-6 text-center text-md-start">
-          <p>&copy; <?= date('Y') ?> <?= APP_NAME ?>. সর্বস্বত্ব সংরক্ষিত।</p>
+          <p>&copy; <?= date('Y') ?> <?= APP_NAME ?>. <?= __('সর্বস্বত্ব সংরক্ষিত।', 'All Rights Reserved.') ?></p>
         </div>
         <div class="col-md-6 text-center text-md-end">
-          <a href="?page=privacy">গোপনীয়তা নীতি</a>
+          <a href="?page=privacy"><?= __('গোপনীয়তা নীতি', 'Privacy Policy') ?></a>
           <span class="mx-2">|</span>
-          <a href="?page=terms">শর্তাবলী</a>
+          <a href="?page=terms"><?= __('শর্তাবলী', 'Terms & Conditions') ?></a>
           <span class="mx-2">|</span>
-          <a href="?page=sitemap">সাইটম্যাপ</a>
+          <a href="?page=sitemap"><?= __('সাইটম্যাপ', 'Sitemap') ?></a>
         </div>
       </div>
     </div>

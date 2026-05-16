@@ -52,14 +52,17 @@ $areas     = $db->query(
           <p>সব তথ্য সঠিকভাবে পূরণ করুন। Admin অনুমোদনের পরে প্রকাশিত হবে।</p>
         </div>
         <div class="add-prop-steps">
+          <!-- প্রথম ধাপ সবসময় ডিফল্ট অ্যাক্টিভ থাকবে -->
           <div class="step active" id="step1Ind">
             <span>১</span> তথ্য
           </div>
-          <div class="step-line"></div>
+          <div class="step-line" id="line1Ind"></div>
+          
           <div class="step" id="step2Ind">
             <span>২</span> ছবি
           </div>
-          <div class="step-line"></div>
+          <div class="step-line" id="line2Ind"></div>
+          
           <div class="step" id="step3Ind">
             <span>৩</span> সুবিধা
           </div>
@@ -500,4 +503,178 @@ document.querySelector('[name=title]')?.addEventListener('input', function() {
   document.getElementById('titleCount').textContent = this.value.length + '/255';
   updateChecklist();
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+
+  // ── Scroll Spy / Step Indicator Dynamic ──────────────────────
+  const sections = [
+    { el: document.getElementById('basicInfoSection'), stepId: 'step1Ind', lineId: null },
+    { el: document.getElementById('imageUploadSection'), stepId: 'step2Ind', lineId: 'line1Ind' },
+    { el: document.getElementById('amenitiesSection'), stepId: 'step3Ind', lineId: 'line2Ind' }
+  ];
+
+  const observerOptions = {
+    root: null,
+    rootMargin: '-30% 0px -50% 0px', // স্ক্রিনের মাঝখানে সেকশনটি আসলে ট্রিগার হবে
+    threshold: 0
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const activeSection = sections.find(s => s.el === entry.target);
+        if (activeSection) {
+          updateHeaderSteps(activeSection.stepId);
+        }
+      }
+    });
+  }, observerOptions);
+
+  // অবজার্ভার একটিভ করা
+  sections.forEach(s => {
+    if (s.el) observer.observe(s.el);
+  });
+
+  function updateHeaderSteps(activeStepId) {
+    // প্রথমে সব স্টেপ এবং লাইন থেকে active ক্লাস রিমুভ করা
+    sections.forEach(s => {
+      document.getElementById(s.stepId)?.classList.remove('active');
+      if (s.lineId) document.getElementById(s.lineId)?.classList.remove('active');
+    });
+
+    // বর্তমান স্ক্রোল পজিশন অনুযায়ী স্টেপ একটিভ করা
+    if (activeStepId === 'step1Ind') {
+      document.getElementById('step1Ind')?.classList.add('active');
+    } 
+    else if (activeStepId === 'step2Ind') {
+      document.getElementById('step1Ind')?.classList.add('active');
+      document.getElementById('step2Ind')?.classList.add('active');
+      document.getElementById('line1Ind')?.classList.add('active');
+    } 
+    else if (activeStepId === 'step3Ind') {
+      document.getElementById('step1Ind')?.classList.add('active');
+      document.getElementById('step2Ind')?.classList.add('active');
+      document.getElementById('step3Ind')?.classList.add('active');
+      document.getElementById('line1Ind')?.classList.add('active');
+      document.getElementById('line2Ind')?.classList.add('active');
+    }
+  }
+
+  // ── Location Picker ──────────────────────────────────────────
+  const pickMap = L.map('locationPicker').setView([23.8103, 90.4125], 12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(pickMap);
+  let pickMarker = null;
+
+  pickMap.on('click', e => {
+    const {lat, lng} = e.latlng;
+    document.getElementById('lat').value = lat.toFixed(7);
+    document.getElementById('lng').value = lng.toFixed(7);
+    if (pickMarker) pickMarker.setLatLng(e.latlng);
+    else pickMarker = L.marker(e.latlng).addTo(pickMap);
+  });
+
+  // ── Image Upload & Preview ───────────────────────────────────
+  const imageInput    = document.getElementById('imageInput');
+  const previewGrid   = document.getElementById('imagePreviewGrid');
+  const dropZone      = document.getElementById('imageDropZone');
+  let uploadedImages  = [];
+
+  if (imageInput) imageInput.addEventListener('change', handleFiles);
+
+  if (dropZone) {
+    dropZone.addEventListener('dragover', e => {
+      e.preventDefault(); dropZone.classList.add('drag-over');
+    });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault(); dropZone.classList.remove('drag-over');
+      handleFileList(e.dataTransfer.files);
+    });
+  }
+
+  function handleFiles(e) { handleFileList(e.target.files); }
+
+  function handleFileList(files) {
+    Array.from(files).slice(0, 10 - uploadedImages.length).forEach(file => {
+      if (!file.type.startsWith('image/')) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        uploadedImages.push({name: file.name, url: e.target.result});
+        renderPreviews();
+      };
+      reader.readAsDataURL(file);
+    });
+    updateChecklist();
+  }
+
+  function renderPreviews() {
+    if (!previewGrid) return;
+    previewGrid.innerHTML = uploadedImages.map((img, i) => `
+      <div class="preview-item ${i===0?'cover':''}">
+        <img src="${img.url}" alt="">
+        ${i===0 ? '<span class="cover-badge">Cover</span>' : ''}
+        <button type="button" class="remove-preview" onclick="window.removePreview(${i})">
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+    `).join('');
+  }
+
+  // গ্লোবাল স্কোপে রিমুভ ফাংশন রাখা (HTML onclick এর জন্য)
+  window.removePreview = function(i) {
+    uploadedImages.splice(i, 1);
+    renderPreviews();
+    updateChecklist();
+  }
+
+  // ── Checklist ────────────────────────────────────────────────
+  function updateChecklist() {
+    const title  = document.querySelector('[name=title]')?.value?.trim();
+    const typeEl = document.querySelector('[name=type_id]:checked');
+    const price  = document.querySelector('[name=price]')?.value;
+    const area   = document.querySelector('[name=area_id]')?.value;
+
+    setChk('chk-title',  !!title);
+    setChk('chk-type',   !!typeEl);
+    setChk('chk-price',  !!price && price > 0);
+    setChk('chk-area',   !!area);
+    setChk('chk-images', uploadedImages.length > 0);
+  }
+
+  function setChk(id, ok) {
+    const li = document.getElementById(id);
+    if (!li) return;
+    li.classList.toggle('done', ok);
+    const icon = li.querySelector('i');
+    if (icon) icon.className = ok ? 'bi bi-check-circle-fill' : 'bi bi-circle';
+  }
+
+  // Live checklist update
+  const mainForm = document.getElementById('addPropForm');
+  if (mainForm) {
+    mainForm.addEventListener('input', updateChecklist);
+  }
+  document.addEventListener('change', updateChecklist);
+
+  // Title char count
+  const titleInput = document.querySelector('[name=title]');
+  if (titleInput) {
+    titleInput.addEventListener('input', function() {
+      const countEl = document.getElementById('titleCount');
+      if (countEl) countEl.textContent = this.value.length + '/255';
+      updateChecklist();
+    });
+  }
+
+});
+
+// ── Number Stepper ───────────────────────────────────────────
+function stepVal(id, delta) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.value = Math.max(0, parseInt(el.value||0) + delta);
+  // মূল চেকলিস্ট আপডেট করার ট্রিগার
+  const event = new Event('change', { bubbles: true });
+  el.dispatchEvent(event);
+}
 </script>

@@ -27,6 +27,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'update_rate'      => $db->execute(
             "UPDATE material_rates SET rate=? WHERE id=?",
             [$_POST['rate'], $id]),
+            
+        // ── নতুন অ্যাকশন: লেনদেন সফল করা এবং সাবস্ক্রিপশন সচল করা ──
+        'approve_transaction' => (function() use ($db, $id) {
+            // ১. ট্রানজেকশনের স্ট্যাটাস সফল (success) করা
+            $db->execute("UPDATE transactions SET status='success' WHERE id=?", [$id]);
+            
+            // ২. ট্রানজেকশন থেকে ইউজার আইডি এবং প্ল্যান আইডি (reference_id) বের করা
+            $tx = $db->queryOne("SELECT user_id, reference_id FROM transactions WHERE id=?", [$id]);
+            
+            if ($tx && isset($tx['user_id'])) {
+                $userId = $tx['user_id'];
+                $planId = $tx['reference_id'];
+                
+                // ৩. subscription_plans টেবিল থেকে এই প্যাকেজের মেয়াদ (কত দিন) তা জেনে নেওয়া
+                $plan = $db->queryOne("SELECT duration_days FROM subscription_plans WHERE id=?", [$planId]);
+                $days = isset($plan['duration_days']) ? (int)$plan['duration_days'] : 30; // কিছু না পাওয়া গেলে ডিফল্ট ৩০ দিন
+
+                // ৪. ইউজারকে এজেন্ট রোল (role_id = 2) এবং স্ট্যাটাস সচল (active) করা
+                $db->execute("UPDATE users SET role_id = 2, status = 'active' WHERE id = ?", [$userId]);
+                
+                // ৫. subscriptions টেবিলে ইউজারের সাবস্ক্রিপশন রেকর্ড তৈরি বা আপডেট করা (INTERVAL ? DAY ব্যবহার করে)
+                $existingSub = $db->queryOne("SELECT id FROM subscriptions WHERE user_id = ?", [$userId]);
+                
+                if ($existingSub) {
+                    $db->execute(
+                        "UPDATE subscriptions SET 
+                            plan_id = ?, 
+                            status = 'active', 
+                            starts_at = NOW(), 
+                            expires_at = DATE_ADD(NOW(), INTERVAL ? DAY) 
+                         WHERE user_id = ?", 
+                        [$planId, $days, $userId]
+                    );
+                } else {
+                    $db->execute(
+                        "INSERT INTO subscriptions (user_id, plan_id, status, starts_at, expires_at) 
+                         VALUES (?, ?, 'active', NOW(), DATE_ADD(NOW(), INTERVAL ? DAY))", 
+                        [$userId, $planId, $days]
+                    );
+                }
+            }
+        })(),
+        
         default => null
     };
     header('Location: ?page=admin-dashboard&tab=' . $activeTab . '&saved=1');
@@ -131,7 +174,7 @@ $saved = isset($_GET['saved']);
             $label = $item[1];
             $badge = $item[2] ?? 0;
         ?>
-        <a href="<?= APP_URL ?>/admin-dashboard?tab=<?= $key ?>"
+        <a href="?tab=<?= $key ?>"
           class="admin-nav-item <?= $activeTab === $key ? 'active' : '' ?>">
           <i class="bi <?= $icon ?>"></i>
           <span><?= $label ?></span>
@@ -149,14 +192,13 @@ $saved = isset($_GET['saved']);
         $navItems2 = [
           'rates'    => ['bi-cash-stack', 'Material Rates'],
           'logs'     => ['bi-journal-text', 'Activity Logs'],
-          'settings' => ['bi-gear', 'সাইট সেটিংস'],
         ];
 
         foreach ($navItems2 as $key => $item):
             $icon  = $item[0];
             $label = $item[1];
         ?>
-        <a href="<?= APP_URL ?>/admin-dashboard?tab=<?= $key ?>"
+        <a href="?tab=<?= $key ?>"
           class="admin-nav-item <?= $activeTab === $key ? 'active' : '' ?>">
           <i class="bi <?= $icon ?>"></i>
           <span><?= $label ?></span>
@@ -164,7 +206,6 @@ $saved = isset($_GET['saved']);
         <?php endforeach; ?>
       </div>
     </nav>
-
 
     <a href="?page=logout" class="admin-nav-item danger mt-auto">
       <i class="bi bi-box-arrow-right"></i>
@@ -197,13 +238,12 @@ $saved = isset($_GET['saved']);
         <?php endif; ?>
         <div class="admin-user-chip">
           <div class="admin-avatar">A</div>
-          <span><?= htmlspecialchars($_SESSION['user_name']) ?></span>
+          <span><?= htmlspecialchars($_SESSION['user_name'] ?? 'Admin') ?></span>
         </div>
       </div>
     </header>
 
     <div class="admin-content">
-
       <!-- ════ OVERVIEW ════ -->
       <?php if ($activeTab === 'overview'): ?>
 
@@ -256,7 +296,7 @@ $saved = isset($_GET['saved']);
       <div class="admin-section">
         <div class="section-head">
           <h5><i class="bi bi-clock-history me-2 text-accent"></i>অনুমোদন বাকি</h5>
-          <a href="?page=admin-dashboard&tab=properties" class="btn-link-accent">সব দেখুন →</a>
+          <a href="?tab=properties" class="btn-link-accent">সব দেখুন →</a>
         </div>
         <div class="pending-cards">
           <?php foreach (array_slice($pendingProps, 0, 3) as $p): ?>
@@ -290,7 +330,6 @@ $saved = isset($_GET['saved']);
         </div>
         <?php endif; ?>
       </div>
-
       <!-- ════ USERS ════ -->
       <?php elseif ($activeTab === 'users'): ?>
       <div class="admin-section">
@@ -370,7 +409,6 @@ $saved = isset($_GET['saved']);
           </table>
         </div>
       </div>
-
       <!-- ════ TRANSACTIONS ════ -->
       <?php elseif ($activeTab === 'transactions'): ?>
       <div class="admin-section">
@@ -386,6 +424,7 @@ $saved = isset($_GET['saved']);
               <tr>
                 <th>#</th><th>ব্যবহারকারী</th><th>ধরন</th>
                 <th>পরিমাণ</th><th>Gateway</th><th>স্ট্যাটাস</th><th>তারিখ</th>
+                <th>অ্যাকশন</th>
               </tr>
             </thead>
             <tbody>
@@ -405,6 +444,19 @@ $saved = isset($_GET['saved']);
                   </span>
                 </td>
                 <td><?= date('d M Y', strtotime($t['created_at'])) ?></td>
+                <td>
+                  <?php if (strtolower($t['status']) === 'pending'): ?>
+                    <form method="POST" style="display:inline" onsubmit="return confirm('পেমেন্টটি Success করবেন?')">
+                      <input type="hidden" name="action" value="approve_transaction">
+                      <input type="hidden" name="id" value="<?= $t['id'] ?>">
+                      <button type="submit" class="act-btn green" title="Approve" style="border:none;">
+                        <i class="bi bi-check-lg"></i> Success করুন
+                      </button>
+                    </form>
+                  <?php else: ?>
+                    <span class="text-muted"><i class="bi bi-check-all text-success"></i> অ্যাক্টিভ</span>
+                  <?php endif; ?>
+                </td>
               </tr>
               <?php endforeach; ?>
             </tbody>
@@ -440,7 +492,6 @@ $saved = isset($_GET['saved']);
           <?php endforeach; ?>
         </div>
       </div>
-
       <!-- ════ LOGS ════ -->
       <?php elseif ($activeTab === 'logs'): ?>
       <div class="admin-section">
@@ -475,7 +526,8 @@ $saved = isset($_GET['saved']);
   </div><!-- /.admin-main -->
 </div><!-- /.admin-shell -->
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="<?= APP_URL ?>/assets/js/chart.umd.min.js"></script>
+
 <script>
 // ── Charts ────────────────────────────────────────
 <?php if ($activeTab === 'overview'): ?>

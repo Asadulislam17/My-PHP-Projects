@@ -325,7 +325,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="bkash-number">
               <i class="bi bi-telephone me-2"></i>
-              <span>01XXXXXXXXX</span>
+              <span>01703441733</span>
               <button type="button" onclick="copyPhone(this)" class="copy-phone-btn">
                 <i class="bi bi-copy"></i>
               </button>
@@ -428,7 +428,7 @@ function flipCard(flip) {
 
 // Copy phone
 function copyPhone(btn) {
-  navigator.clipboard.writeText('01XXXXXXXXX');
+  navigator.clipboard.writeText('01703441733');
   btn.innerHTML = '<i class="bi bi-check2"></i>';
   setTimeout(() => btn.innerHTML = '<i class="bi bi-copy"></i>', 2000);
 }

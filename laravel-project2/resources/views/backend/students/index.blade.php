@@ -45,6 +45,7 @@
                         <thead>
                             <tr>
                                 <th>Id</th>
+                                <th>Photo</th>
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Phone</th>
@@ -59,6 +60,21 @@
                                 <tr data-href="{{ route('students.show', $student->id) }}" style="cursor: pointer;">
 
                                     <td class="fw-semibold">{{ $student->id }}</td>
+
+                                    <td class="ignore-click">
+                                        @if ($student->image && file_exists(public_path($student->image)))
+                                            {{-- ডাটাবেজে ছবি থাকলে সেটি গোল করে দেখাবে --}}
+                                            <img src="{{ asset($student->image) }}" alt="Student"
+                                                class="rounded-circle border"
+                                                style="width: 40px; height: 40px; object-fit: cover;">
+                                        @else
+                                            {{-- ছবি না থাকলে আপনার টেমপ্লেটের ডিফল্ট ছবি বা একটি আইকন দেখাবে --}}
+                                            <div class="rounded-circle bg-light d-flex align-middle justify-content-center border"
+                                                style="width: 40px; height: 40px; line-height: 40px;">
+                                                <i class="bi bi-person text-secondary" style="font-size: 20px;"></i>
+                                            </div>
+                                        @endif
+                                    </td>
                                     <td>{{ $student->first_name }} {{ $student->last_name }}</td>
                                     <td>{{ $student->email }}</td>
                                     <td>{{ $student->phone ?? 'N/A' }}</td>
@@ -68,7 +84,7 @@
 
                                     <td class="text-end ignore-click">
                                         <div class="d-flex justify-content-end gap-2">
-                                            
+
                                             <!-- View Button -->
                                             <a href="{{ route('students.show', $student->id) }}"
                                                 class="btn btn-info btn-sm text-white">
@@ -109,18 +125,18 @@
 @endsection
 
 @push('custom_js')
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // পুরো লাইনে (Row) ক্লিক করলে ভিউ পেজে নিয়ে যাওয়ার লজিক
-        document.querySelectorAll("tbody tr[data-href]").forEach(row => {
-            row.addEventListener("click", function(e) {
-                // যদি ক্লিকটি অ্যাকশন কলাম (.ignore-click) এর ভেতরে হয়, তবে ভিউ পেজ ওপেন হবে না
-                if (e.target.closest('.ignore-click')) {
-                    return;
-                }
-                window.location.href = this.dataset.href;
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // পুরো লাইনে (Row) ক্লিক করলে ভিউ পেজে নিয়ে যাওয়ার লজিক
+            document.querySelectorAll("tbody tr[data-href]").forEach(row => {
+                row.addEventListener("click", function(e) {
+                    // যদি ক্লিকটি অ্যাকশন কলাম (.ignore-click) এর ভেতরে হয়, তবে ভিউ পেজ ওপেন হবে না
+                    if (e.target.closest('.ignore-click')) {
+                        return;
+                    }
+                    window.location.href = this.dataset.href;
+                });
             });
         });
-    });
-</script>
+    </script>
 @endpush

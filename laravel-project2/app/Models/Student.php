@@ -18,6 +18,7 @@ class Student extends Model
         'phone',
         'gender',
         'district',
-        'subject'
+        'subject',
+        'image'
     ];
 }

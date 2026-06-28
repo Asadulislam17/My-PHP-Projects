@@ -13,68 +13,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
     $id     = (int)($_POST['id'] ?? 0);
 
-    match($action) {
-        'approve_property' => $db->execute(
-            "UPDATE properties SET status='approved' WHERE id=?", [$id]),
-        'reject_property'  => $db->execute(
-            "UPDATE properties SET status='rejected' WHERE id=?", [$id]),
-        'ban_user'         => $db->execute(
-            "UPDATE users SET status='banned' WHERE id=?", [$id]),
-        'activate_user'    => $db->execute(
-            "UPDATE users SET status='active' WHERE id=?", [$id]),
-        'toggle_featured'  => $db->execute(
-            "UPDATE properties SET is_featured = NOT is_featured WHERE id=?", [$id]),
-        'update_rate'      => $db->execute(
-            "UPDATE material_rates SET rate=? WHERE id=?",
-            [$_POST['rate'], $id]),
-            
-        // ── নতুন অ্যাকশন: লেনদেন সফল করা এবং সাবস্ক্রিপশন সচল করা ──
-        'approve_transaction' => (function() use ($db, $id) {
-            // ১. ট্রানজেকশনের স্ট্যাটাস সফল (success) করা
-            $db->execute("UPDATE transactions SET status='success' WHERE id=?", [$id]);
-            
-            // ২. ট্রানজেকশন থেকে ইউজার আইডি এবং প্ল্যান আইডি (reference_id) বের করা
-            $tx = $db->queryOne("SELECT user_id, reference_id FROM transactions WHERE id=?", [$id]);
-            
-            if ($tx && isset($tx['user_id'])) {
-                $userId = $tx['user_id'];
-                $planId = $tx['reference_id'];
-                
-                // ৩. subscription_plans টেবিল থেকে এই প্যাকেজের মেয়াদ (কত দিন) তা জেনে নেওয়া
-                $plan = $db->queryOne("SELECT duration_days FROM subscription_plans WHERE id=?", [$planId]);
-                $days = isset($plan['duration_days']) ? (int)$plan['duration_days'] : 30; // কিছু না পাওয়া গেলে ডিফল্ট ৩০ দিন
-
-                // ৪. ইউজারকে এজেন্ট রোল (role_id = 2) এবং স্ট্যাটাস সচল (active) করা
-                $db->execute("UPDATE users SET role_id = 2, status = 'active' WHERE id = ?", [$userId]);
-                
-                // ৫. subscriptions টেবিলে ইউজারের সাবস্ক্রিপশন রেকর্ড তৈরি বা আপডেট করা (INTERVAL ? DAY ব্যবহার করে)
-                $existingSub = $db->queryOne("SELECT id FROM subscriptions WHERE user_id = ?", [$userId]);
-                
-                if ($existingSub) {
-                    $db->execute(
-                        "UPDATE subscriptions SET 
-                            plan_id = ?, 
-                            status = 'active', 
-                            starts_at = NOW(), 
-                            expires_at = DATE_ADD(NOW(), INTERVAL ? DAY) 
-                         WHERE user_id = ?", 
-                        [$planId, $days, $userId]
-                    );
-                } else {
-                    $db->execute(
-                        "INSERT INTO subscriptions (user_id, plan_id, status, starts_at, expires_at) 
-                         VALUES (?, ?, 'active', NOW(), DATE_ADD(NOW(), INTERVAL ? DAY))", 
-                        [$userId, $planId, $days]
-                    );
-                }
-            }
-        })(),
+    // ১. ট্রানজেকশন প্রসেসিং লজিক
+    if ($action === 'approve_transaction' && $id > 0) {
+        $db->execute("UPDATE transactions SET status='success' WHERE id=?", [$id]);
+        $tx = $db->queryOne("SELECT user_id, reference_id FROM transactions WHERE id=?", [$id]);
         
-        default => null
-    };
-    header('Location: ?page=admin-dashboard&tab=' . $activeTab . '&saved=1');
+        if ($tx && isset($tx['user_id'])) {
+            $userId = $tx['user_id'];
+            $planId = $tx['reference_id'];
+            
+            $plan = $db->queryOne("SELECT duration_days FROM subscription_plans WHERE id=?", [$planId]);
+            $days = isset($plan['duration_days']) ? (int)$plan['duration_days'] : 30;
+
+            $db->execute("UPDATE users SET role_id = 2, status = 'active' WHERE id = ?", [$userId]);
+            
+            $existingSub = $db->queryOne("SELECT id FROM subscriptions WHERE user_id = ?", [$userId]);
+            
+            if ($existingSub) {
+                $db->execute(
+                    "UPDATE subscriptions SET 
+                        plan_id = ?, 
+                        status = 'active', 
+                        starts_at = NOW(), 
+                        expires_at = DATE_ADD(NOW(), INTERVAL " . (int)$days . " DAY) 
+                     WHERE user_id = ?", 
+                    [$planId, $userId]
+                );
+            } else {
+                $db->execute(
+                    "INSERT INTO subscriptions (user_id, plan_id, status, starts_at, expires_at) 
+                     VALUES (?, ?, 'active', NOW(), DATE_ADD(NOW(), INTERVAL " . (int)$days . " DAY))", 
+                    [$userId, $planId]
+                );
+            }
+        }
+    } else {
+        // ২. অন্যান্য সাধারণ অ্যাকশনসমূহ
+        match($action) {
+            'approve_property' => $db->execute("UPDATE properties SET status='approved' WHERE id=?", [$id]),
+            'reject_property'  => $db->execute("UPDATE properties SET status='rejected' WHERE id=?", [$id]),
+            'ban_user'         => $db->execute("UPDATE users SET status='banned' WHERE id=?", [$id]),
+            'activate_user'    => $db->execute("UPDATE users SET status='active' WHERE id=?", [$id]),
+            'toggle_featured'  => $db->execute("UPDATE properties SET is_featured = NOT is_featured WHERE id=?", [$id]),
+            'update_rate'      => $db->execute("UPDATE material_rates SET rate=? WHERE id=?", [$_POST['rate'], $id]),
+            default => null
+        };
+    }
+
+    // রিডাইরেক্ট কোডটি এখন সঠিকভাবে শুধুমাত্র POST সাবমিট হলেই কাজ করবে
+    header('Location: ?tab=' . $activeTab . '&saved=1');
     exit;
 }
+
 
 // ── Stats ────────────────────────────────────────
 $stats = [
@@ -148,7 +138,7 @@ $saved = isset($_GET['saved']);
 ══════════════════════════════════════════════ -->
 <div class="admin-shell">
 
-  <!-- ── Sidebar ── -->
+   <!-- ── Sidebar ── -->
   <aside class="admin-sidebar" id="adminSidebar">
     <div class="admin-brand">
       <div class="admin-brand-icon">
@@ -174,7 +164,8 @@ $saved = isset($_GET['saved']);
             $label = $item[1];
             $badge = $item[2] ?? 0;
         ?>
-        <a href="?tab=<?= $key ?>"
+        <!-- href এ ?page=admin-dashboard যোগ করা হয়েছে -->
+        <a href="?page=admin-dashboard&tab=<?= $key ?>"
           class="admin-nav-item <?= $activeTab === $key ? 'active' : '' ?>">
           <i class="bi <?= $icon ?>"></i>
           <span><?= $label ?></span>
@@ -198,7 +189,8 @@ $saved = isset($_GET['saved']);
             $icon  = $item[0];
             $label = $item[1];
         ?>
-        <a href="?tab=<?= $key ?>"
+        <!-- href এ ?page=admin-dashboard যোগ করা হয়েছে -->
+        <a href="?page=admin-dashboard&tab=<?= $key ?>"
           class="admin-nav-item <?= $activeTab === $key ? 'active' : '' ?>">
           <i class="bi <?= $icon ?>"></i>
           <span><?= $label ?></span>
@@ -212,6 +204,7 @@ $saved = isset($_GET['saved']);
       <span>Logout</span>
     </a>
   </aside>
+
 
   <!-- ── Main ── -->
   <div class="admin-main">

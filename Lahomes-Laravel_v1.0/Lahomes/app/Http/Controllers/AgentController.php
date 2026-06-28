@@ -8,7 +8,7 @@ class AgentController extends Controller
 {
     public function dashboard()
     {
-        // এটি agent ফোল্ডারের ভেতরের dashboard.blade.php ফাইলকে দেখাবে
-        return view('agent.dashboard'); 
+        
+        return view('dashboards.agents'); 
     }
 }

@@ -4,7 +4,6 @@
         <main class="dashboard-content">
             <div class="container-fluid px-3 px-lg-4 py-4">
 
-                <!-- পেজের ওপরে টাইটেল এবং অ্যাকশন বাটন অংশ -->
                 <div class="page-heading">
                     <div class="page-heading-copy">
                         <span class="page-icon"><i class="bi bi-person-plus" aria-hidden="true"></i></span>

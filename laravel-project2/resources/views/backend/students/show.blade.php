@@ -22,18 +22,18 @@
 
             <section class="row g-3">
 
-                <!-- বাম পাশ: প্রোফাইল কার্ড এবং ছবি (col-xl-4) -->
+                
                 <div class="col-12 col-xl-4">
                     <div class="panel h-100 text-center profile-card">
                         <div class="profile-cover">
                             <img src="{{ asset('assets/images/png/dasher-ui-bootstrap-5.jpg') }}" alt="dashboard preview">
                         </div>
 
-                        {{-- 📷 ডাটাবেজ থেকে আসল ছবি দেখানোর লজিক --}}
+                        
                         @if($student->image && file_exists(public_path($student->image)))
                             <img class="avatar-img avatar-xl profile-photo border bg-white" src="{{ asset($student->image) }}" alt="{{ $student->first_name }}">
                         @else
-                            {{-- ছবি না থাকলে জেন্ডার অনুযায়ী আলাদা প্লেসহোল্ডার আইকন --}}
+                            
                             <div class="avatar-img avatar-xl profile-photo border bg-light d-inline-flex align-items-center justify-content-center" style="width: 96px; height: 96px; border-radius: 50%;">
                                 @if($student->gender == 'Female')
                                     <i class="bi bi-person-fill text-secondary" style="font-size: 50px;"></i>
@@ -52,19 +52,19 @@
                         </div>
 
                         <div class="info-list mt-4 text-start">
-    <!-- Email Box: text-break এবং ওভারফ্লো লক করা হয়েছে যেন লেখা বর্ডার না ভাঙে -->
+    
     <div class="d-flex justify-content-between align-items-center" style="overflow: hidden;">
         <span class="text-muted small">Email</span>
         <strong class="text-break text-end small ps-2" style="max-width: 70%; word-break: break-all;">{{ $student->email }}</strong>
     </div>
     
-    <!-- Phone Box -->
+    
     <div class="d-flex justify-content-between align-items-center">
         <span class="text-muted small">Phone</span>
         <strong>{{ $student->phone ?? 'N/A' }}</strong>
     </div>
     
-    <!-- District Box -->
+    
     <div class="d-flex justify-content-between align-items-center">
         <span class="text-muted small">District</span>
         <strong>{{ $student->district }}</strong>
@@ -73,7 +73,7 @@
 
                     </div>
                 </div>
-                <!-- ডান পাশ: অ্যাকাডেমিক তথ্যের টেবিল প্যানেল (col-xl-8) -->
+                
                 <div class="col-12 col-xl-8">
                     <div class="panel h-100 p-4">
                         <div class="panel-header px-0 pt-0">
@@ -119,7 +119,7 @@
                                         <th class="text-muted py-3">Enrolled Subjects</th>
                                         <td class="py-3">
                                             @if ($student->subject)
-                                                {{-- কমা দিয়ে আলাদা থাকা সাবজেক্টগুলোকে ভেঙে ব্যাজ আকারে দেখানো হচ্ছে --}}
+                                               
                                                 @foreach (explode(',', $student->subject) as $sub)
                                                     <span class="badge text-bg-primary mb-1">{{ $sub }}</span>
                                                 @endforeach
@@ -132,7 +132,7 @@
                             </table>
                         </div>
 
-                        <!-- এডিট প্রোফাইল বাটন -->
+                       
                         <div class="d-flex justify-content-end gap-2 mt-4">
                             <a href="{{ route('students.edit', $student->id) }}" class="btn btn-primary">
                                 <i class="bi bi-pencil-square"></i> Edit Profile

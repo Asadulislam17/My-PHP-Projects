@@ -4,7 +4,7 @@
     <main class="dashboard-content">
         <div class="container-fluid px-3 px-lg-4 py-4">
             
-            <!-- পেজের টাইটেল অংশ -->
+          
             <div class="page-heading">
                 <div class="page-heading-copy">
                     <span class="page-icon"><i class="bi bi-book" aria-hidden="true"></i></span>
@@ -16,7 +16,7 @@
                 </div>
             </div>
 
-            <!-- সাকসেস মেসেজ -->
+           
             @if (session('success'))
                 <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
                     {{ session('success') }}
@@ -36,7 +36,7 @@
                     </div>
                 </div>
 
-                <!-- টেবিল -->
+                
                 <div class="table-responsive">
                     <table class="table align-middle mb-0 table-hover">
                         <thead>
@@ -69,7 +69,7 @@
                                     </td>
                                 </tr>
 
-                                <!-- ==================== এডিট মডাল ==================== -->
+                               
                                 <div class="modal fade" id="editSubjectModal{{ $subject->id }}" tabindex="-1" aria-labelledby="editSubjectModalLabel{{ $subject->id }}" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content">
@@ -105,7 +105,7 @@
         </div>
     </main>
 
-    <!-- ==================== অ্যাড মডাল ==================== -->
+    
     <div class="modal fade" id="addSubjectModal" tabindex="-1" aria-labelledby="addSubjectModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">

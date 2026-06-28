@@ -6,11 +6,11 @@
     <div class="card auth-card">
         <div class="card-body px-3 py-5">
             <div class="mx-auto mb-4 text-center auth-logo">
-                <a href="{{ route('second', ['dashboards', 'analytics'])}}" class="logo-dark">
+                <a href="{{ route('login') }}" class="logo-dark">
                     <img src="/images/logo-dark.png" height="32" alt="logo dark">
                 </a>
 
-                <a href="{{ route('second', ['dashboards', 'analytics'])}}" class="logo-light">
+                <a href="{{ route('login') }}" class="logo-light">
                     <img src="/images/logo-light.png" height="28" alt="logo light">
                 </a>
             </div>
@@ -19,22 +19,41 @@
             <p class="text-muted text-center mt-1 mb-4">New to our platform? Sign up now! It only takes a minute.</p>
 
             <div class="px-4">
-                <form action="{{ route('second', ['dashboards', 'analytics'])}}" class="authentication-form">
+                
+                <form action="{{ route('register') }}" method="POST" class="authentication-form">
+                    
+                    @csrf 
+
                     <div class="mb-3">
-                        <label class="form-label" for="example-name">Name</label>
-                        <input type="name" id="example-name" name="example-name" class="form-control bg-light bg-opacity-50 border-light py-2" placeholder="Enter your name">
+                        <label class="form-label" for="name">Name</label>
+                        
+                        <input type="text" id="name" name="name" value="{{ old('name') }}" class="form-control bg-light bg-opacity-50 border-light py-2" placeholder="Enter your name" required autofocus>
+                        @error('name') <span class="text-danger small">{{ $message }}</span> @enderror
                     </div>
+
                     <div class="mb-3">
-                        <label class="form-label" for="example-email">Email</label>
-                        <input type="email" id="example-email" name="example-email" class="form-control bg-light bg-opacity-50 border-light py-2" placeholder="Enter your email">
+                        <label class="form-label" for="email">Email</label>
+                        
+                        <input type="email" id="email" name="email" value="{{ old('email') }}" class="form-control bg-light bg-opacity-50 border-light py-2" placeholder="Enter your email" required>
+                        @error('email') <span class="text-danger small">{{ $message }}</span> @enderror
                     </div>
+
                     <div class="mb-3">
-                        <label class="form-label" for="example-password">Password</label>
-                        <input type="text" id="example-password" class="form-control bg-light bg-opacity-50 border-light py-2" placeholder="Enter your password">
+                        <label class="form-label" for="password">Password</label>
+                        
+                        <input type="password" id="password" name="password" class="form-control bg-light bg-opacity-50 border-light py-2" placeholder="Enter your password" required>
+                        @error('password') <span class="text-danger small">{{ $message }}</span> @enderror
                     </div>
+
+                   
+                    <div class="mb-3">
+                        <label class="form-label" for="password_confirmation">Confirm Password</label>
+                        <input type="password" id="password_confirmation" name="password_confirmation" class="form-control bg-light bg-opacity-50 border-light py-2" placeholder="Confirm your password" required>
+                    </div>
+
                     <div class="mb-3">
                         <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="checkbox-signin">
+                            <input type="checkbox" class="form-check-input" id="checkbox-signin" required>
                             <label class="form-check-label" for="checkbox-signin">I accept Terms and Condition</label>
                         </div>
                     </div>
@@ -54,7 +73,7 @@
         </div> <!-- end card-body -->
     </div> <!-- end card -->
 
-    <p class="mb-0 text-center text-white">I already have an account <a href="{{ route('second', ['auth', 'login'])}}" class="text-reset text-unline-dashed fw-bold ms-1">Sign In</a></p>
+    <p class="mb-0 text-center text-white">I already have an account <a href="{{ route('login') }}" class="text-reset text-unline-dashed fw-bold ms-1">Sign In</a></p>
 </div> <!-- end col -->
 
 @endsection

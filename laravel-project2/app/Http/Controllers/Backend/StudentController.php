@@ -36,11 +36,11 @@ class StudentController extends Controller
             'phone'      => 'nullable|string|max:15',
             'gender'     => 'required|in:Male,Female,Other',
             'district'   => 'required|string|max:50',
-            'image'      => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // ছবির সিকিউরিটি ভ্যালিডেশন
+            'image'      => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'subject.*'  => 'nullable|string|max:50',
         ]);
 
-        // ২. নতুন স্টুডেন্ট অবজেক্ট তৈরি
+        
         $student = new Student;
         $student->first_name = $request->first_name;
         $student->last_name  = $request->last_name;
@@ -49,7 +49,7 @@ class StudentController extends Controller
         $student->gender     = $request->gender;
         $student->district   = $request->district;
 
-        // === 📷 ছবি আপলোড করার মূল লজিক শুরু ===
+      
         if ($request->hasFile('image')) {
             $file = $request->file('image');
 
@@ -90,7 +90,7 @@ class StudentController extends Controller
     {
         $student = Student::findOrFail($id);
 
-        // ১. ডাটা ভ্যালিডেশন (ছবির ফরম্যাট এবং সাইজ চেক সহ)
+        
         $request->validate([
             'first_name' => 'required|string|max:50|min:3',
             'last_name'  => 'required|string|max:50',
@@ -98,11 +98,11 @@ class StudentController extends Controller
             'phone'      => 'nullable|string|max:15',
             'gender'     => 'required|in:Male,Female,Other',
             'district'   => 'required|string|max:50',
-            'image'      => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // ২ এমবি সাইজ লিমিট
+            'image'      => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'subject.*'  => 'nullable|string|max:50',
         ]);
 
-        // ২. ফিল্ডের ডাটা পরিবর্তন
+        
         $student->first_name = $request->first_name;
         $student->last_name  = $request->last_name;
         $student->email      = $request->email;
@@ -110,10 +110,10 @@ class StudentController extends Controller
         $student->gender     = $request->gender;
         $student->district   = $request->district;
 
-        // === 📷 এডিট পেজে ছবি পরিবর্তন করার লজিক শুরু ===
+        
         if ($request->hasFile('image')) {
 
-            // যদি ডাটাবেজে আগে কোনো ছবি থাকে, তবে নতুন ছবি সেভ করার আগে পুরোনো ছবিটি লোকাল ফোল্ডার থেকে ডিলিট করে দেবো
+           
             if ($student->image && file_exists(public_path($student->image))) {
                 unlink(public_path($student->image));
             }
@@ -122,11 +122,10 @@ class StudentController extends Controller
             $filename = time() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads/students'), $filename);
 
-            // নতুন ছবির পাথ ডাটাবেজে সেভ হলো
+            
             $student->image = 'uploads/students/' . $filename;
         }
-        // === 📷 ছবি পরিবর্তন করার লজিক শেষ ===
-
+       
         $subjects = $request->subject ?? [];
         $student->subject = implode(",", $subjects);
 
